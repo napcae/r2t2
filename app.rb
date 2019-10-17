@@ -4,6 +4,7 @@ require 'json'
 require 'pry'
 require 'csv'
 require 'pp'
+require 'http'
 
 # helper
 def suppress_output
@@ -25,11 +26,11 @@ track, artist = ""
 parsed_page = File.open("index.html")
 hypem_loved = Nokogiri::HTML(parsed_page)
 
-def get_track_info(artist,title_count = 1)
+def get_track_info(artist,track,title_count = 1,*args)
 	__DEEZER_API_ENDPOINT="https://api.deezer.com/search?q="
 	# creating api call for deezer, search for artist and tracks scraped from hypem loved page
 	# TODO: Replace with actual variables from step above
-	query = __DEEZER_API_ENDPOINT + "artist:" + "\"#{artist}\"" + "track:" + "\"lose yourself\"" + "&limit=#{title_count}&order=RANKING"
+	query = __DEEZER_API_ENDPOINT + "artist:" + "\"#{artist}\"" + "track:" + "\"#{track}\"" + "&limit=#{title_count}&order=RANKING"
 
 	deezer_query = HTTParty.get(query).to_s
 	parsed = JSON.parse(deezer_query)
@@ -42,12 +43,13 @@ def get_track_info(artist,title_count = 1)
 		album_name =  deezer_search_response["album"]["title"]
 		
 		# for debugging
-		#puts "# " + artist_name + " - " + title + " from " + album_name
-		puts link
+		debug = "# " + artist_name + " - " + title + " from " + album_name
+
+		return [link,debug]
 	end
 end
 
-get_track_info("eminem")
+#puts get_track_info("eminem","lose yourself")[0]
 
 # parse loved songs from hypem loved page
 hypem_loved.css('#track-list').css('.track_name').map do | track_item |
@@ -62,8 +64,11 @@ hypem_loved.css('#track-list').css('.track_name').map do | track_item |
   puts "###################################"
   }
 
+  puts artist + " - " + track
+
   #puts "Info " + artist
-  #get_track_info(artist)
+  puts get_track_info(artist,track)[0]
+  #puts get_track_info("eminem","lose yourself")[1]
 end
 
 # multiple entries or nothing found for #artist - #track:
