@@ -19,36 +19,52 @@ end
 
 # constants and var init
 HYPEM_TEXT=" - search Hype Machine for this artist"
-__DEEZER_API_ENDPOINT="https://api.deezer.com/search?q="
 track, artist = ""
 
 #parsed_page = HTTParty.get("https://hypem.com/napcae")
 parsed_page = File.open("index.html")
 hypem_loved = Nokogiri::HTML(parsed_page)
 
+def get_track_info(artist, number)
+	__DEEZER_API_ENDPOINT="https://api.deezer.com/search?q="
+	# creating api call for deezer, search for artist and tracks scraped from hypem loved page
+	# TODO: Replace with actual variables from step above
+	query = __DEEZER_API_ENDPOINT + "artist:" + "\"#{artist}\"" + "track:" + "\"lose yourself\"" + "&limit=5&order=RANKING"
+
+	deezer_query = HTTParty.get(query).to_s
+	parsed = JSON.parse(deezer_query)
+	parsed = parsed["data"]
+
+	parsed.each do | deezer_search_response |
+		link = deezer_search_response["link"]
+		title = deezer_search_response["title"]
+		artist_name = deezer_search_response["artist"]["name"]
+		album_name =  deezer_search_response["album"]["title"]
+		
+		# for debugging
+		#puts "# " + artist_name + " - " + title + " from " + album_name
+		puts link
+	end
+	puts number
+end
+
+get_track_info("eminem", 0)
+
 # parse loved songs from hypem loved page
 hypem_loved.css('#track-list').css('.track_name').map do | track_item |
   suppress_output {
   artist = track_item.css(".artist").attribute('title').text
-  puts artist = artist.gsub(HYPEM_TEXT,"")
+  artist = artist.gsub(HYPEM_TEXT,"")
 
   track = track_item.css(".base-title").text
-  puts track = track.gsub(/ \(.+\)/,"")
+  track = track.gsub(/ \(.+\)/,"")
+
+  puts artist + " - " + track
   puts "###################################"
   }
-end
 
-# creating api call for deezer, search for artist and tracks scraped from hypem loved page
-# TODO: Replace with actual variables from step above
-query = __DEEZER_API_ENDPOINT + "artist:" + "\"eminem\"" + "track:" + "\"lose yourself\"" + "&limit=5&order=RANKING"
-
-deezer_query = HTTParty.get(query).to_s
-parsed = JSON.parse(deezer_query)
-parsed = parsed["data"]
-
-parsed.each do | results |
-	puts results["link"]
-	puts #####
+  #puts "Info " + artist
+  #get_track_info(artist)
 end
 
 # multiple entries or nothing found for #artist - #track:
