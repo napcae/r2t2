@@ -25,17 +25,17 @@ track, artist = ""
 parsed_page = File.open("index.html")
 hypem_loved = Nokogiri::HTML(parsed_page)
 
-def get_track_info(artist, number)
+def get_track_info(artist,title_count = 1)
 	__DEEZER_API_ENDPOINT="https://api.deezer.com/search?q="
 	# creating api call for deezer, search for artist and tracks scraped from hypem loved page
 	# TODO: Replace with actual variables from step above
-	query = __DEEZER_API_ENDPOINT + "artist:" + "\"#{artist}\"" + "track:" + "\"lose yourself\"" + "&limit=5&order=RANKING"
+	query = __DEEZER_API_ENDPOINT + "artist:" + "\"#{artist}\"" + "track:" + "\"lose yourself\"" + "&limit=#{title_count}&order=RANKING"
 
 	deezer_query = HTTParty.get(query).to_s
 	parsed = JSON.parse(deezer_query)
 	parsed = parsed["data"]
 
-	parsed.each do | deezer_search_response |
+	parsed.take(title_count).each do | deezer_search_response |
 		link = deezer_search_response["link"]
 		title = deezer_search_response["title"]
 		artist_name = deezer_search_response["artist"]["name"]
@@ -45,10 +45,9 @@ def get_track_info(artist, number)
 		#puts "# " + artist_name + " - " + title + " from " + album_name
 		puts link
 	end
-	puts number
 end
 
-get_track_info("eminem", 0)
+get_track_info("eminem")
 
 # parse loved songs from hypem loved page
 hypem_loved.css('#track-list').css('.track_name').map do | track_item |
