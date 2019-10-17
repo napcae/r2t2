@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
-require 'HTTParty'
-require 'Nokogiri'
+require 'nokogiri'
 require 'json'
 require 'pry'
 require 'csv'
 require 'pp'
 require 'http'
+require 'cgi'
 
 # helper
 def suppress_output
@@ -33,9 +33,11 @@ def get_track_info(artist, track, title_count = 1, *_args)
   __DEEZER_API_ENDPOINT = 'https://api.deezer.com/search?q='
   # creating api call for deezer, search for artist and tracks scraped from hypem loved page
   # TODO: Replace with actual variables from step above
-  query = __DEEZER_API_ENDPOINT + 'artist:' + "\"#{artist}\"" + 'track:' + "\"#{track}\"" + "&limit=#{title_count}&order=RANKING"
+  escape = CGI::escape('artist:' + "\"#{artist}\"" + 'track:' + "\"#{track}\"" + "&limit=#{title_count}&order=RANKING")
+  query = __DEEZER_API_ENDPOINT + escape
 
-  deezer_query = HTTParty.get(query).to_s
+  deezer_query = HTTP.get(query)
+
   parsed = JSON.parse(deezer_query)
   parsed = parsed['data']
 
