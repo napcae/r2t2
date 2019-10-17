@@ -42,6 +42,7 @@ hypem_loved.css('#track-list').css('.track_name').map do | track_item |
 end
 
 # creating api call for deezer, search for artist and tracks scraped from hypem loved page
+# TODO: Replace with actual variables from step above
 query = __DEEZER_API_ENDPOINT + "artist:" + "\"eminem\"" + "track:" + "\"lose yourself\"" + "&limit=5&order=RANKING"
 
 hypem = HTTParty.get(query).to_s
