@@ -5,7 +5,7 @@ require 'pry'
 require 'csv'
 require 'pp'
 
-#helper
+# helper
 def suppress_output
   original_stdout, original_stderr = $stdout.clone, $stderr.clone
   $stderr.reopen File.new('/dev/null', 'w')
@@ -17,7 +17,7 @@ ensure
 end
 #######
 
-# constants
+# constants and var init
 HYPEM_TEXT=" - search Hype Machine for this artist"
 __DEEZER_API_ENDPOINT="https://api.deezer.com/search?q="
 track, artist = ""
@@ -30,13 +30,10 @@ hypem_loved = Nokogiri::HTML(parsed_page)
 hypem_loved.css('#track-list').css('.track_name').map do | track_item |
   suppress_output {
   artist = track_item.css(".artist").attribute('title').text
-  
   puts artist = artist.gsub(HYPEM_TEXT,"")
 
   track = track_item.css(".base-title").text
-
   puts track = track.gsub(/ \(.+\)/,"")
-
   puts "###################################"
   }
 end
@@ -45,10 +42,8 @@ end
 # TODO: Replace with actual variables from step above
 query = __DEEZER_API_ENDPOINT + "artist:" + "\"eminem\"" + "track:" + "\"lose yourself\"" + "&limit=5&order=RANKING"
 
-hypem = HTTParty.get(query).to_s
-
-parsed = JSON.parse(hypem)
-
+deezer_query = HTTParty.get(query).to_s
+parsed = JSON.parse(deezer_query)
 parsed = parsed["data"]
 
 parsed.each do | results |
