@@ -13,7 +13,6 @@ require './helper.rb'
 
 # constants and var init
 DEEZER_API_ENDPOINT = 'https://api.deezer.com/search?q='
-HYPEM_TEXT = ' - search Hype Machine for this artist'
 track, artist = ''
 
 # parsed_page = HTTParty.get("https://hypem.com/napcae")
@@ -51,8 +50,8 @@ end
 
 # parse loved songs from hypem loved page
 hypem_loved.css('#track-list').css('.track_name').map do |track_item|
-  artist = track_item.css('.artist').attribute('title').text.gsub(HYPEM_TEXT, '')
-  track = track_item.css('.base-title').text.gsub(/ \(.+\)/, '')
+  artist = clean_string(track_item.css('.artist').attribute('title').text)
+  track = clean_string(track_item.css('.base-title').text)
 
   # puts "Info " + artist + ": " + track
   link, debug = get_track_info(artist, track)
