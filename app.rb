@@ -50,16 +50,11 @@ end
 
 # parse loved songs from hypem loved page
 hypem_loved.css('#track-list').css('.track_name').map do |track_item|
-  suppress_output do
-    artist = track_item.css('.artist').attribute('title').text
-    artist = artist.gsub(HYPEM_TEXT, '')
+  artist = track_item.css('.artist').attribute('title').text
+  artist = artist.gsub(HYPEM_TEXT, '')
 
-    track = track_item.css('.base-title').text
-    track = track.gsub(/ \(.+\)/, '')
-
-    puts artist + ' - ' + track
-    puts '###################################'
-  end
+  track = track_item.css('.base-title').text
+  track = track.gsub(/ \(.+\)/, '')
 
   # puts "Info " + artist + ": " + track
   link, debug = get_track_info(artist, track)
