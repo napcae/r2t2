@@ -16,5 +16,12 @@ task :prepare do
   end
 end
 
+task :build do
+  system("docker build -t favtrackloader:dev .")
+end
+
 task :run do
-  
+  Rake::Task["prepare"].execute
+  Rake::Task["build"].execute
+  system("docker run -it favtrackloader:dev")
+end

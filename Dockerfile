@@ -1,6 +1,6 @@
 FROM ruby:2.6.5
 
-COPY SMLoadr-linux-x86.zip
+COPY SMLoadr-linux-x86.zip .
 RUN unzip SMLoadr-linux-x86.zip && \
 	rm SMLoadr-linux-x86.zip && \
 	chmod +x SMLoadr-linux-x86
