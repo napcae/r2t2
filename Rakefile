@@ -1,13 +1,14 @@
 #!/usr/bin/env ruby
-
-SMLoadrVersion = '1.9.5'
-SMLoadr = "https://git.fuwafuwa.moe/SMLoadrDev/SMLoadr/releases/download/v#{SMLoadrVersion}/SMLoadr-linux-x86_v#{SMLoadrVersion}.zip"
 require 'http'
 
+SMLoadrVersion = '1.9.5'
+SMLoadrLink = "https://git.fuwafuwa.moe/SMLoadrDev/SMLoadr/releases/download/v#{SMLoadrVersion}/SMLoadr-linux-x86_v#{SMLoadrVersion}.zip"
+SMLoadr = "SMLoadr-linux-x86.zip"
+
 task :prepare do
-  if !File.file?("SMLoadr-linux-x86.zip")
+  if !File.file?(SMLoadr)
   	puts "Downloading SMLoadr."
-  	File.open("SMLoadr-linux-x86.zip", "w") { |f|
+  	File.open(SMLoadr, "w") { |f|
  		f.write(HTTP.follow.get(SMLoadr))
   	}
   	puts "Downloading SMLoadr successful."
@@ -17,6 +18,7 @@ task :prepare do
 end
 
 task :build do
+  system("unzip -f #{SMLoadr}")
   system("docker build -t favtrackloader:dev .")
 end
 
