@@ -1,5 +1,10 @@
 FROM ruby:2.6.5
 
+COPY SMLoadr-linux-x86.zip
+RUN unzip SMLoadr-linux-x86.zip && \
+	rm SMLoadr-linux-x86.zip && \
+	chmod +x SMLoadr-linux-x86
+
 RUN gem install bundler
 RUN bundle config --global frozen 1
 
@@ -12,4 +17,3 @@ COPY . .
 
 CMD ["./app.rb"]
 
-#https://git.fuwafuwa.moe/SMLoadrDev/SMLoadr/releases/download/v1.9.5/SMLoadr-linux-x86_v1.9.5.zip

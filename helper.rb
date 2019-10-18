@@ -15,7 +15,7 @@ end
 
 def clean_string(str)
   # remove until artist: "SB : COEO"
-  str = str.gsub(/.+\:\s/,'')
+  str = str.gsub(/.+\:\s/, '')
 
   # remove (feat. xxxx)
   str = str.gsub(/ \(.+\)/, '')
@@ -24,4 +24,4 @@ def clean_string(str)
   str = str.gsub(HYPEM_TEXT, '')
 end
 
-#puts clean_string("SB : COEO rubyartist (feat. deine mutter) + test (feat. deine mutter) - search Hype Machine for this artist")
+# puts clean_string("SB : COEO rubyartist (feat. deine mutter) + test (feat. deine mutter) - search Hype Machine for this artist")
