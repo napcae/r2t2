@@ -7,6 +7,7 @@ require 'pry'
 require 'csv'
 require 'pp'
 require 'http'
+require 'HTTParty'
 require 'cgi'
 
 require './helper.rb'
@@ -15,8 +16,8 @@ require './helper.rb'
 DEEZER_API_ENDPOINT = 'https://api.deezer.com/search?q='
 track, artist = ''
 
-# parsed_page = HTTParty.get("https://hypem.com/napcae")
-parsed_page = File.open('index.html')
+parsed_page = HTTParty.get("https://hypem.com/napcae")
+#parsed_page = File.open('index.html')
 
 hypem_loved = Nokogiri::HTML(parsed_page)
 
@@ -72,7 +73,6 @@ hypem_loved.css('#track-list').css('.track_name').map do |track_item|
   # puts get_track_info("eminem","lose yourself")[1]
 end
 
-parsed_page.close
 downloadLinks.close
 # multiple entries or nothing found for #artist - #track:
 # [1] artist - track
