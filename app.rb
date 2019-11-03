@@ -21,6 +21,8 @@ parsed_page = HTTParty.get("https://hypem.com/napcae")
 
 hypem_loved = Nokogiri::HTML(parsed_page)
 
+date = Time.new
+
 # creating api call for deezer, search for artist and tracks scraped from hypem loved page
 # return deezer link for smloadr
 def get_track_link(artist, track, title_count = 1)
@@ -67,12 +69,15 @@ hypem_loved.css('#track-list').css('.track_name').map do |track_item|
   # puts "Info " + artist + ": " + track
   link, state = get_track_link(artist, track)
   if state == 1
-    puts 'DEBUG: ' + artist + ' - ' + track + ' not found.'
+    puts "[#{date}]" + artist + ' - ' + track + ' not found.'
   else
     lastDownload = File.open(".lastDownload", "w+")
     downloadLinks = File.open("downloadLinks.txt", "w")
+
     downloadLinks.puts link.to_s
+    puts "[#{date}]" + artist + ' - ' + track + ' sent to download.'
     lastDownload.puts link.to_s
+
     downloadLinks.close
     lastDownload.close
   end
