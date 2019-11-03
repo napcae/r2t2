@@ -25,6 +25,9 @@ date = Time.new
 
 # creating api call for deezer, search for artist and tracks scraped from hypem loved page
 # return deezer link for smloadr
+###
+# function returns link, status code as array
+###
 def get_track_link(artist, track, title_count = 1)
   escape = CGI.escape('artist:' + "\"#{artist}\"" + 'track:' + "\"#{track}\"" + "&limit=#{title_count}&order=RANKING")
   query = DEEZER_API_ENDPOINT + escape
@@ -36,11 +39,7 @@ def get_track_link(artist, track, title_count = 1)
   total  = json['total']
 
   if total.zero?
-    status = 1
-    ###
-    # send to debug file
-    ####
-    ['', status]
+    ['', false]
   else
     parsed.take(title_count).each do |deezer_search_response|
       link = deezer_search_response['link']
@@ -48,12 +47,7 @@ def get_track_link(artist, track, title_count = 1)
       artist_name = deezer_search_response['artist']['name']
       album_name =  deezer_search_response['album']['title']
 
-      ###
-      # todo: call to download here
-      # mark last downloaded file
-      ####
-
-      return [link, status]
+      return [link, true]
     end
   end
 end
@@ -65,13 +59,16 @@ hypem_loved.css('#track-list').css('.track_name').reverse.map do |track_item|
 
   # puts "Info " + artist + ": " + track
   link, state = get_track_link(artist, track)
-  if state == 1
+  if !state
     puts "[#{date}]" + artist + ' - ' + track + ' not found.'
   else
     lastDownload = File.open('.lastDownload', 'w+')
     downloadLinks = File.open('downloadLinks.txt', 'w')
 
     downloadLinks.puts link.to_s
+
+#    puts system("./SMLoadr-linux-x86")
+
     puts "[#{date}]" + artist + ' - ' + track + ' sent to download.'
     lastDownload.puts link.to_s
 
