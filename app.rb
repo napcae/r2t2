@@ -26,6 +26,9 @@ date = Time.new
 # creating api call for deezer, search for artist and tracks scraped from hypem loved page
 # return deezer link for smloadr
 ###
+# receives input; artist: name of artist to search for, track: name of track to search for,
+# title_count: number of tracks to return if there are multiple results
+#
 # function returns link, status code as array
 ###
 def get_track_link(artist, track, title_count = 1)
@@ -52,6 +55,11 @@ def get_track_link(artist, track, title_count = 1)
   end
 end
 
+#####
+# push tracks into array [link]
+# have consumer reading array from bottom
+#
+
 # parse loved songs from hypem loved page
 hypem_loved.css('#track-list').css('.track_name').reverse.map do |track_item|
   artist = clean_string(track_item.css('.artist').attribute('title').text)
@@ -68,7 +76,7 @@ hypem_loved.css('#track-list').css('.track_name').reverse.map do |track_item|
     downloadLinks.puts link.to_s
 
     `./SMLoadr-linux-x64 -u #{link}`
-    
+
     puts "[#{date}]" + artist + ' - ' + track + ' sent to download.'
     lastDownload.puts link.to_s
 

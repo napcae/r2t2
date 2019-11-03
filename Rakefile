@@ -13,7 +13,7 @@ task :prepare do
     File.open(SMLoadr, 'w') do |f|
       f.write(HTTP.follow.get(SMLoadrLink))
       puts 'Downloading SMLoadr successful.'
-    rescue
+    rescue StandardError
       File.delete(SMLoadr)
       puts 'Download failed.'
     end
@@ -25,7 +25,7 @@ end
 
 task :build do
   system("unzip -f #{SMLoadr}")
-  system("chmod +x SMLoadr-linux-x64")
+  system('chmod +x SMLoadr-linux-x64')
   system('docker build -t favtrackloader:dev .')
 end
 
