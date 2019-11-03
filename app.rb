@@ -22,7 +22,8 @@ parsed_page = HTTParty.get("https://hypem.com/napcae")
 hypem_loved = Nokogiri::HTML(parsed_page)
 
 # creating api call for deezer, search for artist and tracks scraped from hypem loved page
-def get_track_info(artist, track, title_count = 1)
+# return deezer link for smloadr
+def get_track_link(artist, track, title_count = 1)
   escape = CGI.escape('artist:' + "\"#{artist}\"" + 'track:' + "\"#{track}\"" + "&limit=#{title_count}&order=RANKING")
   query = DEEZER_API_ENDPOINT + escape
 
@@ -33,11 +34,11 @@ def get_track_info(artist, track, title_count = 1)
   total  = json['total']
 
   if total.zero?
-    debug = artist + ' - ' + track + " not found."
+    status = 1
     ###
     # send to debug file
     ####
-    ['', debug]
+    ['', status]
   else
     parsed.take(title_count).each do |deezer_search_response|
       link = deezer_search_response['link']
@@ -45,19 +46,16 @@ def get_track_info(artist, track, title_count = 1)
       artist_name = deezer_search_response['artist']['name']
       album_name =  deezer_search_response['album']['title']
 
-      # for debugging
-      debug = artist_name + ' - ' + title + ' from ' + album_name + ' sent to download.'
-
       ###
       # todo: call to download here
       # mark last downloaded file
       ####
 
-      # debug = "test"
-      return [link, debug]
+      return [link, status]
     end
   end
 end
+
 
 downloadLinks = File.open("downloadLinks.txt", "w")
 
@@ -67,13 +65,24 @@ hypem_loved.css('#track-list').css('.track_name').map do |track_item|
   track = clean_string(track_item.css('.base-title').text)
 
   # puts "Info " + artist + ": " + track
-  link, debug = get_track_info(artist, track)
-  puts 'DEBUG: ' + debug.to_s
-  downloadLinks.puts link.to_s
-  # puts get_track_info("eminem","lose yourself")[1]
+  link, state = get_track_link(artist, track)
+  if state == 1
+    puts 'DEBUG: ' + artist + ' - ' + track + ' not found.'
+  else
+    lastDownload = File.open(".lastDownload", "w+")
+    downloadLinks = File.open("downloadLinks.txt", "w")
+    downloadLinks.puts link.to_s
+    lastDownload.puts link.to_s
+    downloadLinks.close
+    lastDownload.close
+  end
+  # puts get_track_link("eminem","lose yourself")[1]
 end
 
-downloadLinks.close
+
+
+
+
 # multiple entries or nothing found for #artist - #track:
 # [1] artist - track
 # [2] artist - track
