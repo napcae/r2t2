@@ -1,9 +1,7 @@
-FROM ruby:2.6.5-alpine
+FROM ruby:2.6.5
 
-COPY SMLoadr-linux-x86 .
-RUN chmod +x SMLoadr-linux-x86
+COPY SMLoadr-linux-x64 .
 
-RUN apk update && apk add --update-cache build-base
 RUN gem install bundler
 RUN bundle config --global frozen 1
 
@@ -11,9 +9,9 @@ WORKDIR /usr/src/app
 
 COPY Gemfile Gemfile.lock ./
 RUN bundle install
-RUN apk del build-base && rm -rf /var/cache/apk/*
 
 COPY . .
+RUN rm SMLoadr-linux-x64.zip
 
 CMD ["./app.rb"]
 

@@ -7,7 +7,7 @@ require 'pry'
 require 'csv'
 require 'pp'
 require 'http'
-require 'HTTParty'
+require 'httparty'
 require 'cgi'
 
 require './helper.rb'
@@ -67,8 +67,8 @@ hypem_loved.css('#track-list').css('.track_name').reverse.map do |track_item|
 
     downloadLinks.puts link.to_s
 
-#    puts system("./SMLoadr-linux-x86")
-
+    `./SMLoadr-linux-x64 -u #{link}`
+    
     puts "[#{date}]" + artist + ' - ' + track + ' sent to download.'
     lastDownload.puts link.to_s
 
