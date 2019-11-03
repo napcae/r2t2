@@ -19,9 +19,9 @@ track, artist = ''
 parsed_page = HTTParty.get('https://hypem.com/napcae')
 # parsed_page = File.open('index.html')
 
-hypem_loved = Nokogiri::HTML(parsed_page)
+HYPEM_LOVED = Nokogiri::HTML(parsed_page)
 
-date = Time.new
+DATE = Time.new
 
 # creating api call for deezer, search for artist and tracks scraped from hypem loved page
 # return deezer link for smloadr
@@ -59,33 +59,40 @@ end
 # push tracks into array [link]
 # have consumer reading array from bottom
 #
+ARRAYY = []
+def init
+  # parse loved songs from hypem loved page
+  HYPEM_LOVED.css('#track-list').css('.track_name').reverse.map do |track_item|
+    artist = clean_string(track_item.css('.artist').attribute('title').text)
+    track = clean_string(track_item.css('.base-title').text)
 
-# parse loved songs from hypem loved page
-hypem_loved.css('#track-list').css('.track_name').reverse.map do |track_item|
-  artist = clean_string(track_item.css('.artist').attribute('title').text)
-  track = clean_string(track_item.css('.base-title').text)
-
-  # puts "Info " + artist + ": " + track
-  link, state = get_track_link(artist, track)
-  if !state
-    puts "[#{date}]" + artist + ' - ' + track + ' not found.'
-  else
-    lastDownload = File.open('.lastDownload', 'w+')
-    downloadLinks = File.open('downloadLinks.txt', 'w')
-
-    downloadLinks.puts link.to_s
-
-    `./SMLoadr-linux-x64 -u #{link}`
-
-    puts "[#{date}]" + artist + ' - ' + track + ' sent to download.'
-    lastDownload.puts link.to_s
-
-    downloadLinks.close
-    lastDownload.close
+    # puts "Info " + artist + ": " + track
+    link, state = get_track_link(artist, track)
+    if !state
+      puts "[#{DATE}]" + "\"" + artist + ' - ' + track + "\" not found."
+    else
+      # push into array
+      a = ARRAYY.push(link)
+    end
+    # puts get_track_link("eminem","lose yourself")[1]
   end
-  # puts get_track_link("eminem","lose yourself")[1]
 end
 
+puts "Starting up and get tracklist..."
+init
+puts "Tracklist initialized..."
+# lastDownload = File.open('.lastDownload', 'w+')
+# downloadLinks = File.open('downloadLinks.txt', 'w')
+
+# downloadLinks.puts link.to_s
+
+# `./SMLoadr-linux-x64 -u #{link}`
+
+# puts "[#{date}]" + artist + ' - ' + track + ' sent to download.'
+# lastDownload.puts link.to_s
+
+# downloadLinks.close
+# lastDownload.close
 # multiple entries or nothing found for #artist - #track:
 # [1] artist - track
 # [2] artist - track
