@@ -95,13 +95,15 @@ artist = scraper.get_artist
 
 puts track.size
 
-
-(0..track.size).each do |index|
-  puts "index: #{index + 1}"
-  puts "Artist: #{artist[index]} - Track: #{track[index]}"
-  sleep 2
+loop do
+  (0..track.size).each do |index|
+    puts "index: #{index + 1}"
+    puts "Artist: #{artist[index]} - Track: #{track[index]}"
+    #sleep 5
+  end
+  sleep 1
+  puts "................................WAITING................................"
 end
-
 if File.file?('scraped.json')
   puts 'scraped.json exists'
   # load file
