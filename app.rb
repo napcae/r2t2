@@ -16,10 +16,6 @@ require './helper.rb'
 DEEZER_API_ENDPOINT = 'https://api.deezer.com/search?q='
 track, artist = ''
 
-parsed_page = HTTParty.get('https://hypem.com/napcae')
-# parsed_page = File.open('index.html')
-
-HYPEM_LOVED = Nokogiri::HTML(parsed_page)
 
 DATE = Time.new
 
@@ -60,26 +56,65 @@ end
 # have consumer reading array from bottom
 #
 ARRAYY = []
-def init
-  # parse loved songs from hypem loved page
-  HYPEM_LOVED.css('#track-list').css('.track_name').reverse.map do |track_item|
-    artist = clean_string(track_item.css('.artist').attribute('title').text)
-    track = clean_string(track_item.css('.base-title').text)
+class Scrape
+  def initialize
+    @parsed_page = HTTParty.get("https://hypem.com/napcae")
+    @hypem_loved = Nokogiri::HTML(@parsed_page)
+  end
 
-    # puts "Info " + artist + ": " + track
-    link, state = get_track_link(artist, track)
-    if !state
-      puts "[#{DATE}]" + "\"" + artist + ' - ' + track + "\" not found."
-    else
-      # push into array
-      a = ARRAYY.push(link)
+  def get_artist 
+    # parse loved songs from hypem loved page
+    @hypem_loved.css('#track-list').css('.track_name').reverse.map do |track_item|
+      artist = clean_string(track_item.css('.artist').attribute('title').text)
     end
-    # puts get_track_link("eminem","lose yourself")[1]
+  end
+
+  def get_track 
+    # parse loved songs from hypem loved page
+    @hypem_loved.css('#track-list').css('.track_name').reverse.map do |track_item|
+      track = clean_string(track_item.css('.base-title').text)
+    end
   end
 end
 
-puts "Starting up and get tracklist..."
-init
+def test
+  link, state = get_track_link(artist, track)
+  if !state
+    puts "[#{DATE}]" + "\"" + artist + ' - ' + track + "\" not found."
+  else
+    # push into array
+    a = ARRAYY.push(link)
+  end
+end
+
+
+scraper = Scrape.new
+
+track = scraper.get_track
+artist = scraper.get_artist
+
+puts track.size
+
+
+(0..track.size).each do |index|
+  puts "index: #{index + 1}"
+  puts "Artist: #{artist[index]} - Track: #{track[index]}"
+  sleep 2
+end
+
+if File.file?('scraped.json')
+  puts 'scraped.json exists'
+  # load file
+  # 
+else
+  puts "Starting up and get tracklist..."
+  puts 'scraped.json not found'
+  init
+  File.open("scraped.json","w") do |f|
+    f.write(ARRAYY)
+  end
+end
+
 puts "Tracklist initialized..."
 # lastDownload = File.open('.lastDownload', 'w+')
 # downloadLinks = File.open('downloadLinks.txt', 'w')
