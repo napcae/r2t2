@@ -35,9 +35,9 @@ def get_track_link(artist, track, title_count = 1)
 
   json = JSON.parse(deezer_query)
   parsed = json['data']
-  total  = json['total']
+  total_songs_count  = json['total']
 
-  if total.zero?
+  if total_songs_count.zero?
     ['', false]
   else
     parsed.take(title_count).each do |deezer_search_response|
@@ -55,7 +55,7 @@ end
 # push tracks into array [link]
 # have consumer reading array from bottom
 #
-ARRAYY = []
+song_list = []
 class Scrape
   def initialize
     @parsed_page = HTTParty.get("https://hypem.com/napcae")
@@ -77,13 +77,13 @@ class Scrape
   end
 end
 
-def test
+def worker
   link, state = get_track_link(artist, track)
   if !state
     puts "[#{DATE}]" + "\"" + artist + ' - ' + track + "\" not found."
   else
     # push into array
-    a = ARRAYY.push(link)
+    a = song_list.push(link)
   end
 end
 
@@ -99,10 +99,12 @@ loop do
   (0..track.size).each do |index|
     puts "index: #{index + 1}"
     puts "Artist: #{artist[index]} - Track: #{track[index]}"
-    #sleep 5
+    # possible states: queued, pending(executed), failed, completed
+    puts "state: queued"
+    sleep 1
   end
-  sleep 1
   puts "................................WAITING................................"
+  sleep 5
 end
 if File.file?('scraped.json')
   puts 'scraped.json exists'
@@ -113,7 +115,7 @@ else
   puts 'scraped.json not found'
   init
   File.open("scraped.json","w") do |f|
-    f.write(ARRAYY)
+    f.write(song_list)
   end
 end
 
