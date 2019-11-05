@@ -18,13 +18,3 @@ class Scrape
     end
   end
 end
-
-def worker
-  link, state = get_track_link(artist, track)
-  if !state
-    puts "[#{DATE}]" + "\"" + artist + ' - ' + track + "\" not found."
-  else
-    # push into array
-    a = song_list.push(link)
-  end
-end

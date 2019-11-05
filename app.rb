@@ -64,26 +64,41 @@ artist = scraper.get_artist
 
 puts track.size
 
-loop do
-  (0..track.size).each do |index|
-    puts "index: #{index + 1}"
-    puts "Artist: #{artist[index]} - Track: #{track[index]}"
-    # possible states: queued, pending(executed), failed, completed
-    puts "state: queued"
-    sleep 1
+def worker
+  link, state = get_track_link(artist, track)
+  if !state
+    puts "[#{DATE}]" + "\"" + artist + ' - ' + track + "\" not found."
+  else
+    # push into array
+    a = song_list.push(link)
   end
-  puts "................................WAITING................................"
-  sleep 5
 end
-if File.file?('scraped.json')
-  puts 'scraped.json exists'
+
+def producer
+  loop do
+    (0..track.size).each do |index|
+      puts "index: #{index + 1}"
+      puts "Artist: #{artist[index]} - Track: #{track[index]}"
+      # possible states: queued, pending(executed), failed, completed
+      puts "state: queued"
+      sleep 1
+    end
+    puts "................................WAITING................................"
+    sleep 5
+  end
+end
+
+
+if File.file?('song_list.json')
+  puts 'song_list.json exists'
   # load file
   # 
+
 else
   puts "Starting up and get tracklist..."
-  puts 'scraped.json not found'
+  puts 'song_list.json not found'
   init
-  File.open("scraped.json","w") do |f|
+  File.open("song_list.json","w") do |f|
     f.write(song_list)
   end
 end
