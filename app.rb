@@ -55,7 +55,7 @@ end
 # push tracks into array [link]
 # have consumer reading array from bottom
 #
-song_list = []
+queue = []
 
 scraper = Scrape.new
 
@@ -74,7 +74,7 @@ def worker
   end
 end
 
-def producer
+def producer(track,artist)
   loop do
     (0..track.size).each do |index|
       puts "index: #{index + 1}"
@@ -89,17 +89,38 @@ def producer
 end
 
 
-if File.file?('song_list.json')
-  puts 'song_list.json exists'
+if File.file?('queue.json')
+  puts 'queue.json exists'
   # load file
   # 
-
+    loop do
+    (0..track.size).each do |index|
+      puts "index: #{index + 1}"
+      puts "Artist: #{artist[index]} - Track: #{track[index]}"
+      # possible states: queued, pending(executed), failed, completed
+      puts "state: queued"
+      sleep 1
+    end
+    puts "................................WAITING................................"
+    sleep 5
+  end
 else
   puts "Starting up and get tracklist..."
-  puts 'song_list.json not found'
-  init
-  File.open("song_list.json","w") do |f|
-    f.write(song_list)
+  puts 'queue.json not found'
+    loop do
+    (0..track.size).each do |index|
+      puts "index: #{index + 1}"
+      puts "Artist: #{artist[index]} - Track: #{track[index]}"
+      # possible states: queued, pending(executed), failed, completed
+      puts "state: queued"
+      sleep 1
+    end
+    puts "................................WAITING................................"
+    sleep 5
+  end
+
+  File.open("queue.json","w") do |f|
+    f.write(queue)
   end
 end
 
