@@ -76,12 +76,14 @@ end
 
 temp_hash = {}
 fin_hash = []
-loop do
+
   (0..track.size).each do |index|
+    link = get_track_link("#{artist[index]}", "#{track[index]}")
     temp_hash = {
-      "index": "#{index + 1}",
+      "index": "#{index}",
       "Artist": "#{artist[index]}",
       "Track:": "#{track[index]}",
+      "link": "#{link[0]}",
     ## possible states: queued, pending(executed), failed, completed
       "state": "queued"
     }
@@ -91,14 +93,14 @@ loop do
       f.write(fin_hash.to_json)
     end
     puts JSON.pretty_generate(temp_hash)
-    sleep 1
+    #sleep 1
     # calculate hash and write to `DownloadedOrQueuedQueue`
     # if already downloaded, don't enqueue
     # otherwise put in queue
   end
   puts "................................WAITING................................"
-  sleep 5
-end
+
+
 
 
 

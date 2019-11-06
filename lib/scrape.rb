@@ -6,14 +6,14 @@ class Scrape
 
   def get_artist 
     # parse loved songs from hypem loved page
-    @hypem_loved.css('#track-list').css('.track_name').reverse.map do |track_item|
+    @hypem_loved.css('#track-list').css('.track_name').map do |track_item|
       artist = clean_string(track_item.css('.artist').attribute('title').text)
     end
   end
 
   def get_track 
     # parse loved songs from hypem loved page
-    @hypem_loved.css('#track-list').css('.track_name').reverse.map do |track_item|
+    @hypem_loved.css('#track-list').css('.track_name').map do |track_item|
       track = clean_string(track_item.css('.base-title').text)
     end
   end
