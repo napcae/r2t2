@@ -74,20 +74,37 @@ def worker
   end
 end
 
-def producer(track,artist)
-  loop do
-    (0..track.size).each do |index|
-      puts "index: #{index + 1}"
-      puts "Artist: #{artist[index]} - Track: #{track[index]}"
-      # possible states: queued, pending(executed), failed, completed
-      puts "state: queued"
-      sleep 1
+temp_hash = {}
+fin_hash = []
+loop do
+  (0..track.size).each do |index|
+    temp_hash = {
+      "index": "#{index + 1}",
+      "Artist": "#{artist[index]}",
+      "Track:": "#{track[index]}",
+    ## possible states: queued, pending(executed), failed, completed
+      "state": "queued"
+    }
+
+    fin_hash << temp_hash
+    File.open("DownloadedOrQueuedQueue.json", "w") do |f|
+      f.write(fin_hash.to_json)
     end
-    puts "................................WAITING................................"
-    sleep 5
+    puts JSON.pretty_generate(temp_hash)
+    sleep 1
+    # calculate hash and write to `DownloadedOrQueuedQueue`
+    # if already downloaded, don't enqueue
+    # otherwise put in queue
   end
+  puts "................................WAITING................................"
+  sleep 5
 end
 
+
+
+
+
+################################################################
 
 if File.file?('queue.json')
   puts 'queue.json exists'
@@ -125,6 +142,7 @@ else
 end
 
 puts "Tracklist initialized..."
+
 # lastDownload = File.open('.lastDownload', 'w+')
 # downloadLinks = File.open('downloadLinks.txt', 'w')
 
