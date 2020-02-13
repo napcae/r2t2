@@ -61,6 +61,7 @@ scraper = Scrape.new
 
 track = scraper.get_track
 artist = scraper.get_artist
+tracklistsize = track.size - 1
 
 puts track.size
 
@@ -74,69 +75,60 @@ def worker
   end
 end
 
-temp_hash = {}
-fin_hash = []
+def build_tracklist_to_download
+  temp_hash = {}
+  fin_hash = []
 
-  (0..track.size).each do |index|
-    link = get_track_link("#{artist[index]}", "#{track[index]}")
-    temp_hash = {
-      "index": "#{index}",
-      "Artist": "#{artist[index]}",
-      "Track:": "#{track[index]}",
-      "link": "#{link[0]}",
-    ## possible states: queued, pending(executed), failed, completed
-      "state": "queued"
-    }
+  # do this to avoid empty 50th entry, off by one shit
+  #tracklistsize = track.size - 1
+    (0..tracklistsize).each do |index|
+      link = get_track_link("#{artist[index]}", "#{track[index]}")
+      temp_hash = {
+        "index": "#{index}",
+        "Artist": "#{artist[index]}",
+        "Track:": "#{track[index]}",
+        "link": "#{link[0]}",
+      ## possible states: queued, pending(executed), failed, completed
+        "state": "queued"
+      }
 
-    fin_hash << temp_hash
-    File.open("DownloadedOrQueuedQueue.json", "w") do |f|
-      f.write(fin_hash.to_json)
+      fin_hash << temp_hash
+      File.open("DownloadedOrQueuedQueue.json", "w") do |f|
+        f.write(fin_hash.to_json)
+      end
+      puts JSON.pretty_generate(temp_hash)
+      #sleep 1
+      # calculate hash and write to `DownloadedOrQueuedQueue`
+      # if already downloaded, don't enqueue
+      # otherwise put in queue
     end
-    puts JSON.pretty_generate(temp_hash)
-    #sleep 1
-    # calculate hash and write to `DownloadedOrQueuedQueue`
-    # if already downloaded, don't enqueue
-    # otherwise put in queue
-  end
-  puts "................................WAITING................................"
+    puts "................................WAITING................................"
+end
 
-
-
-
-
-
-
+################################################################
+# this checks whether queue.json exists to reload state after programm is aborted
 ################################################################
 
 if File.file?('queue.json')
   puts 'queue.json exists'
-  # load file
+
+  ## main queue loop
+  # load file into memory to work with
   # 
-    loop do
-    (0..track.size).each do |index|
-      puts "index: #{index + 1}"
-      puts "Artist: #{artist[index]} - Track: #{track[index]}"
-      # possible states: queued, pending(executed), failed, completed
-      puts "state: queued"
-      sleep 1
-    end
-    puts "................................WAITING................................"
-    sleep 5
-  end
+
 else
+  build_tracklist_to_download
   puts "Starting up and get tracklist..."
   puts 'queue.json not found'
-    loop do
-    (0..track.size).each do |index|
-      puts "index: #{index + 1}"
+  #loop do
+    (0..tracklistsize).each do |index|
+      puts "index: #{index}"
       puts "Artist: #{artist[index]} - Track: #{track[index]}"
       # possible states: queued, pending(executed), failed, completed
       puts "state: queued"
-      sleep 1
+      #sleep 1
     end
-    puts "................................WAITING................................"
-    sleep 5
-  end
+  #end
 
   File.open("queue.json","w") do |f|
     f.write(queue)
