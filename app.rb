@@ -15,6 +15,7 @@ require './helper.rb'
 # constants and var init
 DEEZER_API_ENDPOINT = 'https://api.deezer.com/search?q='
 track, artist = ''
+APP_DIR = 'tmp/queue.json'
 
 
 DATE = Time.new
@@ -76,7 +77,7 @@ end
 # this checks whether queue.json exists to reload state after programm is aborted
 ################################################################
 
-if File.file?('queue.json')
+if File.file?(APP_DIR)
   puts 'queue.json exists'
 
   ## main queue loop
@@ -103,7 +104,7 @@ else
     }
 
     fin_hash << temp_hash
-    File.open("tmp/queue.json", "w") do |f|
+    File.open(APP_DIR, "w") do |f|
       f.write(fin_hash.to_json)
     end
     puts JSON.pretty_generate(temp_hash)
