@@ -20,6 +20,9 @@ def clean_string(str)
   # remove (feat. xxxx)
   str = str.gsub(/ \(.+\)/, '')
 
+  # remove '&'(they mess up deezer search = no results)
+  str = str.gsub(/\s&/, ',')
+
   # remove hypem added bullshit
   str = str.gsub(HYPEM_TEXT, '')
 end

@@ -74,7 +74,6 @@ else
   puts 'queue.json not found'
   puts "Starting up and initializing tracklist..."
   
-  temp_hash = {}
   fin_hash = []
 
   (0...track.size).each do |index|
@@ -105,8 +104,9 @@ logger.info("Tracklist initialized...")
 
 #### main program starts here
 # producer: should create queue.json which holds json representation of hypem.com/napcae + deezer links
+# save highest queued/pending job as .lastDownloaded
+#
 # consumer: reads the queue and downloads the track
-
 
 
 ### notes:
