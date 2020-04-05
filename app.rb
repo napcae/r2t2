@@ -71,27 +71,28 @@ if File.file?(APP_DIR)
 
 else
   #build_tracklist_to_download
-  puts 'queue.json not found'
-  puts "Starting up and initializing tracklist..."
+  logger.info("queue.json not found")
+  logger.info("Starting up and initializing tracklist...")
   
-  fin_hash = []
+  queue = []
 
   (0...track.size).each do |index|
     link = get_track_link("#{artist[index]}", "#{track[index]}")
     temp_hash = {
       "index": "#{index}",
-      "Artist": "#{artist[index]}",
-      "Track:": "#{track[index]}",
+      "artist": "#{artist[index]}",
+      "track": "#{track[index]}",
       "link": "#{link[0]}",
     ## possible states: queued, pending(to be processed by consumer), failed, completed
       "state": "queued"
     }
 
-    fin_hash << temp_hash
+    queue << temp_hash
     File.open(APP_DIR, "w") do |f|
-      f.write(fin_hash.to_json)
+      f.write(queue.to_json)
     end
-    logger.info(JSON.pretty_generate(temp_hash))
+
+    logger.debug(JSON.pretty_generate(temp_hash))
     #sleep 1
     # calculate hash and write to `DownloadedOrQueuedQueue`
     # if already downloaded, don't enqueue
@@ -100,7 +101,6 @@ else
 end
 
 logger.info("Tracklist initialized...")
-
 
 #### main program starts here
 # producer: should create queue.json which holds json representation of hypem.com/napcae + deezer links
