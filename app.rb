@@ -9,6 +9,7 @@ require 'pp'
 require 'http'
 require 'httparty'
 require 'cgi'
+require 'logger'
 
 require './helper.rb'
 
@@ -18,6 +19,8 @@ track, artist = ''
 APP_DIR = 'tmp/queue.json'
 
 DATE = Time.new
+logger = Logger.new(STDOUT)
+logger.level = Logger::INFO
 
 # creating api call for deezer, search for artist and tracks scraped from hypem loved page
 # return deezer link for smloadr
@@ -61,7 +64,7 @@ artist = scraper.get_artist
 ################################################################
 
 if File.file?(APP_DIR)
-  puts 'queue.json exists'
+  logger.info('queue.json exists')
 
   # load file into memory to work with
   # go to main producer loop, creates queue
@@ -81,7 +84,7 @@ else
       "Artist": "#{artist[index]}",
       "Track:": "#{track[index]}",
       "link": "#{link[0]}",
-    ## possible states: queued, pending(executed), failed, completed
+    ## possible states: queued, pending(to be processed by consumer), failed, completed
       "state": "queued"
     }
 
@@ -89,7 +92,7 @@ else
     File.open(APP_DIR, "w") do |f|
       f.write(fin_hash.to_json)
     end
-    puts JSON.pretty_generate(temp_hash)
+    logger.info(JSON.pretty_generate(temp_hash))
     #sleep 1
     # calculate hash and write to `DownloadedOrQueuedQueue`
     # if already downloaded, don't enqueue
@@ -97,7 +100,7 @@ else
   end
 end
 
-puts "Tracklist initialized..."
+logger.info("Tracklist initialized...")
 
 
 #### main program starts here
