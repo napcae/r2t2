@@ -17,7 +17,6 @@ DEEZER_API_ENDPOINT = 'https://api.deezer.com/search?q='
 track, artist = ''
 APP_DIR = 'tmp/queue.json'
 
-
 DATE = Time.new
 
 # creating api call for deezer, search for artist and tracks scraped from hypem loved page
@@ -52,26 +51,10 @@ def get_track_link(artist, track, title_count = 1)
   end
 end
 
-#####
-# push tracks into array [link]
-# have consumer reading array from bottom
-#
-queue = []
-
 scraper = Scrape.new
 
 track = scraper.get_track
 artist = scraper.get_artist
-
-def worker
-  link, state = get_track_link(artist, track)
-  if !state
-    puts "[#{DATE}]" + "\"" + artist + ' - ' + track + "\" not found."
-  else
-    # push into array
-    a = song_list.push(link)
-  end
-end
 
 ################################################################
 # this checks whether queue.json exists to reload state after programm is aborted
@@ -113,7 +96,6 @@ else
     # if already downloaded, don't enqueue
     # otherwise put in queue
   end
-  puts "................................WAITING................................"
 end
 
 puts "Tracklist initialized..."
