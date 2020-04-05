@@ -103,7 +103,7 @@ else
     }
 
     fin_hash << temp_hash
-    File.open("queue.json", "w") do |f|
+    File.open("tmp/queue.json", "w") do |f|
       f.write(fin_hash.to_json)
     end
     puts JSON.pretty_generate(temp_hash)

@@ -5,7 +5,7 @@ require 'http'
 
 SMLoadrVersion = '1.9.5'
 SMLoadrLink = "https://git.fuwafuwa.moe/SMLoadrDev/SMLoadr/releases/download/v#{SMLoadrVersion}/SMLoadr-linux-x64_v#{SMLoadrVersion}.zip"
-SMLoadr = 'SMLoadr-linux-x64.zip'
+SMLoadr = 'vendor/SMLoadr/SMLoadr-linux-x64.zip'
 
 task :prepare do
   if !File.file?(SMLoadr)
