@@ -49,7 +49,7 @@ def get_track_link(artist, track, title_count = 1)
       artist_name = deezer_search_response['artist']['name']
       album_name =  deezer_search_response['album']['title']
 
-      return [link, true]
+      return [link, true, title, artist_name, album_name]
     end
   end
 end
