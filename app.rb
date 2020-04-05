@@ -63,9 +63,8 @@ artist = scraper.get_artist
 if File.file?(APP_DIR)
   puts 'queue.json exists'
 
-  ## main queue loop
   # load file into memory to work with
-  # 
+  # go to main producer loop, creates queue
 
 else
   #build_tracklist_to_download
@@ -100,6 +99,14 @@ end
 
 puts "Tracklist initialized..."
 
+
+#### main program starts here
+# producer: should create queue.json which holds json representation of hypem.com/napcae + deezer links
+# consumer: reads the queue and downloads the track
+
+
+
+### notes:
 # lastDownload = File.open('.lastDownload', 'w+')
 # downloadLinks = File.open('downloadLinks.txt', 'w')
 
