@@ -61,9 +61,6 @@ scraper = Scrape.new
 
 track = scraper.get_track
 artist = scraper.get_artist
-tracklistsize = track.size - 1
-
-puts track.size
 
 def worker
   link, state = get_track_link(artist, track)
@@ -73,36 +70,6 @@ def worker
     # push into array
     a = song_list.push(link)
   end
-end
-
-def build_tracklist_to_download
-  temp_hash = {}
-  fin_hash = []
-
-  # do this to avoid empty 50th entry, off by one shit
-  #tracklistsize = track.size - 1
-    (0..tracklistsize).each do |index|
-      link = get_track_link("#{artist[index]}", "#{track[index]}")
-      temp_hash = {
-        "index": "#{index}",
-        "Artist": "#{artist[index]}",
-        "Track:": "#{track[index]}",
-        "link": "#{link[0]}",
-      ## possible states: queued, pending(executed), failed, completed
-        "state": "queued"
-      }
-
-      fin_hash << temp_hash
-      File.open("DownloadedOrQueuedQueue.json", "w") do |f|
-        f.write(fin_hash.to_json)
-      end
-      puts JSON.pretty_generate(temp_hash)
-      #sleep 1
-      # calculate hash and write to `DownloadedOrQueuedQueue`
-      # if already downloaded, don't enqueue
-      # otherwise put in queue
-    end
-    puts "................................WAITING................................"
 end
 
 ################################################################
@@ -117,22 +84,35 @@ if File.file?('queue.json')
   # 
 
 else
-  build_tracklist_to_download
-  puts "Starting up and get tracklist..."
+  #build_tracklist_to_download
   puts 'queue.json not found'
-  #loop do
-    (0..tracklistsize).each do |index|
-      puts "index: #{index}"
-      puts "Artist: #{artist[index]} - Track: #{track[index]}"
-      # possible states: queued, pending(executed), failed, completed
-      puts "state: queued"
-      #sleep 1
-    end
-  #end
+  puts "Starting up and initializing tracklist..."
+  
+  temp_hash = {}
+  fin_hash = []
 
-  File.open("queue.json","w") do |f|
-    f.write(queue)
+  (0...track.size).each do |index|
+    link = get_track_link("#{artist[index]}", "#{track[index]}")
+    temp_hash = {
+      "index": "#{index}",
+      "Artist": "#{artist[index]}",
+      "Track:": "#{track[index]}",
+      "link": "#{link[0]}",
+    ## possible states: queued, pending(executed), failed, completed
+      "state": "queued"
+    }
+
+    fin_hash << temp_hash
+    File.open("queue.json", "w") do |f|
+      f.write(fin_hash.to_json)
+    end
+    puts JSON.pretty_generate(temp_hash)
+    #sleep 1
+    # calculate hash and write to `DownloadedOrQueuedQueue`
+    # if already downloaded, don't enqueue
+    # otherwise put in queue
   end
+  puts "................................WAITING................................"
 end
 
 puts "Tracklist initialized..."
