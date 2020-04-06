@@ -3,13 +3,11 @@
 require_relative "lib/scrape"
 require 'nokogiri'
 require 'json'
-require 'pry'
 require 'csv'
 require 'pp'
 require 'http'
 require 'httparty'
 require 'cgi'
-require 'logger'
 
 require './helper.rb'
 
@@ -20,7 +18,7 @@ APP_DIR = 'tmp/persistent_queue.json'
 
 DATE = Time.new
 logger = Logger.new(STDOUT)
-logger.level = Logger::INFO
+logger.level = Logger::DEBUG
 
 # creating api call for deezer, search for artist and tracks scraped from hypem loved page
 # return deezer link for smloadr
@@ -66,10 +64,6 @@ artist = scraper.get_artist
 if File.file?(APP_DIR)
   logger.info('persistent_queue.json exists')
   queue = JSON.parse(File.read(APP_DIR))
-
-  # load file into memory to work with
-  # go to main producer loop, creates queue
-
 else
   #build_tracklist_to_download
   logger.info("persistent_queue.json not found")
@@ -85,7 +79,7 @@ else
       "artist": "#{artist[index]}",
       "track": "#{track[index]}",
       "link": "#{link[0]}",
-      "JID": "#{jid}",
+      "jid": "#{jid}",
     ## possible states: queued, pending(to be processed by consumer), failed, completed
       "state": "queued"
     }
@@ -109,25 +103,26 @@ logger.info("Tracklist initialized...")
 # producer: should create queue.json which holds json representation of hypem.com/napcae + deezer links
 # save highest queued/pending job as .lastDownloaded
 #
-# exit
-# work = Queue.new
-# producer = Thread.new do
-#   count = 0
-#   loop do
-#     sleep 1 # some work done by the producer
-#     count += 1
-    
-#     # if song is already in persistence file, don't add to queue
-#     if queue.find {|x| x['link'] == "https://www.deezer.com/track/880655542"}
-#     if link[0] is in persistent_queue.[0].link
-#       skip job
-#     else
-#       puts "queuing job #{count}"
-#       work << "job #{count}"
-#     end
-#   end
-# end
-# producer.join
+
+work = Queue.new
+producer = Thread.new do
+  count = 0
+  loop do
+    sleep 1 # some work done by the producer
+    count += 1
+    q = queue.find {|x| x['jid'] == "ccf6b985ed075725e4ad1417264d1840"}
+    # if favorite from hypem is already in persistence file, don't add to queue, otherwise add new songs
+    if q
+      logger.info("No new songs found...")
+      logger.debug(q)
+      sleep 60
+    else
+      puts "queuing job #{count}"
+      work << "job #{count}"
+    end
+  end
+end
+producer.join
 # consumer: reads the queue and downloads the track
 
 
