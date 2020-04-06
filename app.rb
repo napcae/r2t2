@@ -16,7 +16,7 @@ require './helper.rb'
 # constants and var init
 DEEZER_API_ENDPOINT = 'https://api.deezer.com/search?q='
 track, artist = ''
-APP_DIR = 'tmp/queue.json'
+APP_DIR = 'tmp/persistent_queue.json'
 
 DATE = Time.new
 logger = Logger.new(STDOUT)
@@ -64,25 +64,28 @@ artist = scraper.get_artist
 ################################################################
 
 if File.file?(APP_DIR)
-  logger.info('queue.json exists')
+  logger.info('persistent_queue.json exists')
+  queue = JSON.parse(File.read(APP_DIR))
 
   # load file into memory to work with
   # go to main producer loop, creates queue
 
 else
   #build_tracklist_to_download
-  logger.info("queue.json not found")
+  logger.info("persistent_queue.json not found")
   logger.info("Starting up and initializing tracklist...")
   
   queue = []
 
   (0...track.size).each do |index|
     link = get_track_link("#{artist[index]}", "#{track[index]}")
+    jid = Digest::MD5.hexdigest "#{artist[index]}"+"#{track[index]}"
     temp_hash = {
       "index": "#{index}",
       "artist": "#{artist[index]}",
       "track": "#{track[index]}",
       "link": "#{link[0]}",
+      "JID": "#{jid}",
     ## possible states: queued, pending(to be processed by consumer), failed, completed
       "state": "queued"
     }
@@ -106,6 +109,25 @@ logger.info("Tracklist initialized...")
 # producer: should create queue.json which holds json representation of hypem.com/napcae + deezer links
 # save highest queued/pending job as .lastDownloaded
 #
+# exit
+# work = Queue.new
+# producer = Thread.new do
+#   count = 0
+#   loop do
+#     sleep 1 # some work done by the producer
+#     count += 1
+    
+#     # if song is already in persistence file, don't add to queue
+#     if queue.find {|x| x['link'] == "https://www.deezer.com/track/880655542"}
+#     if link[0] is in persistent_queue.[0].link
+#       skip job
+#     else
+#       puts "queuing job #{count}"
+#       work << "job #{count}"
+#     end
+#   end
+# end
+# producer.join
 # consumer: reads the queue and downloads the track
 
 
