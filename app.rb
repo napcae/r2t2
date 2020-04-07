@@ -130,7 +130,7 @@ producer = Thread.new do
       logger.info('No new songs found...')
       logger.debug("most recent song in persistent_queue: #{worker_queue[0]}")
       count = 0
-      sleep 5 # 300
+      sleep 300
     else
       logger.debug("New items found! Going to queue: #{artist[count]} - #{track[count]}")
 
@@ -147,9 +147,8 @@ producer = Thread.new do
       }
 
       logger.debug("Putting job in worker queue: #{temp_hash}")
-      #worker_queue << temp_hash
       worker_queue.unshift(temp_hash)
-      
+
       logger.debug("Worker queue, last 10 items: #{worker_queue[0..9]}")
 
       logger.debug("Worker Queue: #{persistent_queue[0..3].to_yaml}")
