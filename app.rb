@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
-require_relative "lib/scrape"
+
+require_relative 'lib/scrape'
 require 'nokogiri'
 require 'json'
 require 'csv'
@@ -36,7 +37,7 @@ def get_track_link(artist, track, title_count = 1)
 
   json = JSON.parse(deezer_query)
   parsed = json['data']
-  total_songs_count  = json['total']
+  total_songs_count = json['total']
 
   if total_songs_count.zero?
     ['', false]
@@ -60,46 +61,44 @@ artist = scraper.get_artist
 ################################################################
 # this checks whether queue.json exists to reload state after programm is aborted
 ################################################################
-
+worker_queue = []
 if File.file?(APP_DIR)
   logger.info('persistent_queue.json exists')
   persistent_queue = JSON.parse(File.read(APP_DIR))
+  worker_queue = persistent_queue
 else
-  #build_tracklist_to_download
-  logger.info("persistent_queue.json not found")
-  logger.info("Starting up and initializing tracklist...")
-  
+  # build_tracklist_to_download
+  logger.info('persistent_queue.json not found')
+  logger.info('Starting up and initializing tracklist...')
+
   persistent_queue = []
 
   (0...track.size).each do |index|
-    link = get_track_link("#{artist[index]}", "#{track[index]}")
-    jid = Digest::MD5.hexdigest "#{artist[index]}"+"#{track[index]}"
+    link = get_track_link((artist[index]).to_s, (track[index]).to_s)
+    jid = Digest::MD5.hexdigest (artist[index]).to_s + (track[index]).to_s
     temp_hash = {
-      "index": "#{index}",
-      "artist": "#{artist[index]}",
-      "track": "#{track[index]}",
-      "link": "#{link[0]}",
-      "jid": "#{jid}",
-    ## possible states: queued, pending(to be processed by consumer), failed, completed
-      "state": "queued"
+      "index": index.to_s,
+      "artist": (artist[index]).to_s,
+      "track": (track[index]).to_s,
+      "link": (link[0]).to_s,
+      "jid": jid.to_s,
+      ## possible states: queued, pending(to be processed by consumer), failed, completed
+      "state": 'queued'
     }
 
     persistent_queue << temp_hash
-    File.open(APP_DIR, "w") do |f|
+    File.open(APP_DIR, 'w') do |f|
       f.write(persistent_queue.to_json)
     end
-
     logger.debug(JSON.pretty_generate(temp_hash))
-    #sleep 1
+    # sleep 1
     # calculate hash and write to `DownloadedOrQueuedQueue`
     # if already downloaded, don't enqueue
     # otherwise put in queue
   end
 end
 
-logger.info("Tracklist initialized...")
-
-
+logger.info('Tracklist initialized...')
 
 # while true do
 #   scraper = Scrape.new
@@ -107,54 +106,73 @@ logger.info("Tracklist initialized...")
 #   artist = scraper.get_artist
 #   logger.debug("Freshest: #{artist[0]} - #{track[0]}")
 #   sleep 5
-# end 
+# end
 
 #### main program starts here
 # producer: should create queue.json which holds json representation of hypem.com/napcae + deezer links
 # save highest queued/pending job as .lastDownloaded
 #
-work = []
+
 producer = Thread.new do
   count = 0
   loop do
     scraper = Scrape.new
     track = scraper.get_track
     artist = scraper.get_artist
-    logger.debug("New items found! Going to queue: #{artist[count]} - #{track[count]}")
 
-    scraped_track_jid = Digest::MD5.hexdigest "#{artist[count]}"+"#{track[count]}"
-    scraped_track_of_persistent_queue = persistent_queue.find {|x| x['jid'] == scraped_track_jid}
+    logger.debug("Most recent song on hypem should be: #{artist[count]} - #{track[count]}")
+    scraped_track_jid = Digest::MD5.hexdigest (artist[count]).to_s + (track[count]).to_s
+    # check if hash of new song is already known
+    scraped_track_of_persistent_queue = persistent_queue.find { |x| x['jid'] == scraped_track_jid }
 
     # if favorite from hypem is already in persistence file, don't add to queue, otherwise add new songs
     if scraped_track_of_persistent_queue
-      logger.info("No new songs found...")
-      logger.debug("most recent song in persistent_queue: #{scraped_track_of_persistent_queue}")
+      logger.info('No new songs found...')
+      logger.debug("most recent song in persistent_queue: #{worker_queue[0]}")
       count = 0
-      sleep 10
+      sleep 5 # 300
     else
-      link = get_track_link("#{artist[count]}", "#{track[count]}")
-      jid = Digest::MD5.hexdigest "#{artist[count]}"+"#{track[count]}"
-      temp_hash = {
-        "artist"=> "#{artist[count]}",
-        "track"=> "#{track[count]}",
-        "link"=> "#{link[0]}",
-        "jid"=> "#{jid}",
-      ## possible states: queued, pending(to be processed by consumer), failed, completed
-        "state": "queued"
-      }
-      logger.debug("Putting job in worker queue: #{temp_hash}")
-      work << temp_hash
-      logger.debug("Worker queue: #{work}")
+      logger.debug("New items found! Going to queue: #{artist[count]} - #{track[count]}")
 
-      persistent_queue.unshift(work[0])
-      #puts persistent_queue[-1]
+      link = get_track_link((artist[count]).to_s, (track[count]).to_s)
+      jid = Digest::MD5.hexdigest (artist[count]).to_s + (track[count]).to_s
+      
+      temp_hash = {
+        'artist' => (artist[count]).to_s,
+        'track' => (track[count]).to_s,
+        'link' => (link[0]).to_s,
+        'jid' => jid.to_s,
+        ## possible states: queued, pending(to be processed by  consumer), failed, completed
+        'state' => 'queued'
+      }
+
+      logger.debug("Putting job in worker queue: #{temp_hash}")
+      #worker_queue << temp_hash
+      worker_queue.unshift(temp_hash)
+      
+      logger.debug("Worker queue, last 10 items: #{worker_queue[0..9]}")
+
+      logger.debug("Worker Queue: #{persistent_queue[0..3].to_yaml}")
       count += 1
+
+      logger.debug("Attempting to persist changes to disk")
+      File.open(APP_DIR, 'w') do |f|
+       f.write(persistent_queue.to_json)
+      end
     end
   end
 end
-producer.join
-# consumer: reads the queue and downloads the track
 
+# consumer = Thread.new do
+#   loop do
+#     puts "I'm here"
+#     sleep 5
+#   end
+# end
+
+producer.join
+# consumer.join
+# consumer: reads the queue and downloads the track
 
 ### notes:
 # lastDownload = File.open('.lastDownload', 'w+')
