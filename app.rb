@@ -40,7 +40,7 @@ else
 
   (0...track.size).each do |index|
     queue = QueueObject.new
-    temp_hash = queue.create_hash(index, artist, track)
+    temp_hash = queue.info(index, artist, track)
 
     persistent_queue << temp_hash
     File.open(APP_DIR, 'w') do |f|
@@ -79,7 +79,7 @@ producer = Thread.new do
       logger.debug("New items found! Going to queue: #{artist[count]} - #{track[count]}")
 
       queue = QueueObject.new
-      temp_hash = queue.create_hash(count, artist, track)
+      temp_hash = queue.info(count, artist, track)
 
       logger.debug("Putting job in worker queue: #{temp_hash}")
       worker_queue.unshift(temp_hash)
@@ -106,20 +106,12 @@ end
 
 producer.join
 # consumer.join
+
+#####
 # consumer: reads the queue and downloads the track
-
-### notes:
-# lastDownload = File.open('.lastDownload', 'w+')
-# downloadLinks = File.open('downloadLinks.txt', 'w')
-
-# downloadLinks.puts link.to_s
-
 # `./SMLoadr-linux-x64 -u #{link}`
 
-# puts "[#{date}]" + artist + ' - ' + track + ' sent to download.'
-# lastDownload.puts link.to_s
 
-# downloadLinks.close
 # lastDownload.close
 # multiple entries or nothing found for #artist - #track:
 # [1] artist - track

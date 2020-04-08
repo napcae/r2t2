@@ -5,3 +5,4 @@ downloadLinks.txt
 SMLoadr-linux-x64.zip
 *.json
 tmp/
+coverage/
