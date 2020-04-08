@@ -8,8 +8,6 @@ require 'csv'
 require 'pp'
 require 'http'
 require 'httparty'
-require 'cgi'
-
 require './helper.rb'
 
 # constants and var init
@@ -31,8 +29,8 @@ if File.file?(APP_DIR)
 else
   scraper = Scrape.new
 
-  track = scraper.get_track
-  artist = scraper.get_artist
+  track = scraper.get_track_from_hypem
+  artist = scraper.get_artist_from_hypem
 
   # build_tracklist_to_download
   logger.info('persistent_queue.json not found')
@@ -74,8 +72,8 @@ producer = Thread.new do
   count = 0
   loop do
     scraper = Scrape.new
-    track = scraper.get_track
-    artist = scraper.get_artist
+    track = scraper.get_track_from_hypem
+    artist = scraper.get_artist_from_hypem
 
     logger.debug("Most recent song on hypem should be: #{artist[count]} - #{track[count]}")
     scraped_track_jid = Digest::MD5.hexdigest (artist[count]).to_s + (track[count]).to_s
