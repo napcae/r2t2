@@ -2,10 +2,14 @@
 # frozen_string_literal: true
 
 require 'http'
+require 'rspec/core/rake_task'
 
 SMLoadrVersion = '1.9.5'
 SMLoadrLink = "https://git.fuwafuwa.moe/SMLoadrDev/SMLoadr/releases/download/v#{SMLoadrVersion}/SMLoadr-linux-x64_v#{SMLoadrVersion}.zip"
 SMLoadr = 'vendor/SMLoadr/SMLoadr-linux-x64.zip'
+
+RSpec::Core::RakeTask.new(:spec)
+task :default => :spec
 
 task :prepare do
   if !File.file?(SMLoadr)
