@@ -48,16 +48,16 @@ def get_track_link(artist, track, title_count = 1)
   end
 end
 
-## creating hashes 
+## creating hashes
 class QueueObject
-  def create(index = 0, artist_list, track_list)
-    state = "queued"
-    
+  def create_hash(index = 0, artist_list, track_list)
+    state = 'queued'
+
     if artist_list[index].empty? || track_list[index].empty?
-      raise ArgumentError, "Artist or Track missing!"
+      raise ArgumentError, 'Artist or Track missing!'
     end
 
-    #if artist_list[index] == nil
+    # if artist_list[index] == nil
     link = get_track_link((artist_list[index]).to_s, (track_list[index]).to_s)
     jid = Digest::MD5.hexdigest (artist_list[index]).to_s + (track_list[index]).to_s
 
@@ -68,7 +68,7 @@ class QueueObject
       'jid' => jid.to_s,
       ## possible states: queued, pending(to be processed by  consumer), failed, completed
       'state' => state.to_s
-     }
+    }
   end
 end
 
