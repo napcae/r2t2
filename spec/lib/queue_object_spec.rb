@@ -1,19 +1,16 @@
-# frozen_string_literal: true
-
-require 'spec_helper'
-require_relative '../helper.rb'
+require_relative '../../lib/queue_object.rb'
 
 DEEZER_API_ENDPOINT = 'https://api.deezer.com/search?q='
 
 artist = ['',
-          'lose yourself',
-          'la malquerida',
+          'eminem',
+          'natalia lafourcade',
           'testartist',
           '']
 
 track = ['',
-         'eminem',
-         'natalia lafourcade',
+         'lose yourself',
+         'la malquerida',
          '',
          'testtrack']
 
@@ -25,10 +22,10 @@ describe 'QueueObject#info' do
   context 'given valid parameters' do
     it 'returns an hash object with link and a state for the queue' do
       expect(@queue_object.info(1, artist, track)).to include(
-        'artist' => 'lose yourself',
-        'track' => 'eminem',
-        'link' => '',
-        'jid' => 'a8407789f2310d5009c12e5c8857170a',
+        'artist' => 'eminem',
+        'track' => 'lose yourself',
+        'link' => 'https://www.deezer.com/track/1109731',
+        'jid' => '1217912a7c78a07a26a317beb481b78b',
         'state' => 'queued'
       )
     end

@@ -1,5 +1,4 @@
-require 'spec_helper'
-require_relative '../lib/scrape.rb'
+require_relative '../../lib/scrape.rb'
 
 
 
