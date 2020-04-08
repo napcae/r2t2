@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+require 'cgi'
+require 'http'
+
 HYPEM_TEXT = ' - search Hype Machine for this artist'
 
 def suppress_output
@@ -42,6 +45,30 @@ def get_track_link(artist, track, title_count = 1)
 
       return [link, true, title, artist_name, album_name]
     end
+  end
+end
+
+## creating hashes 
+class QueueObject
+  def create(index = 0, artist_list, track_list)
+    state = "queued"
+    
+    if artist_list[index].empty? || track_list[index].empty?
+      raise ArgumentError, "Artist or Track missing!"
+    end
+
+    #if artist_list[index] == nil
+    link = get_track_link((artist_list[index]).to_s, (track_list[index]).to_s)
+    jid = Digest::MD5.hexdigest (artist_list[index]).to_s + (track_list[index]).to_s
+
+    temp_hash = {
+      'artist' => (artist_list[index]).to_s,
+      'track' => (track_list[index]).to_s,
+      'link' => (link[0]).to_s,
+      'jid' => jid.to_s,
+      ## possible states: queued, pending(to be processed by  consumer), failed, completed
+      'state' => state.to_s
+     }
   end
 end
 
