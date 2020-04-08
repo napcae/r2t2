@@ -21,11 +21,11 @@ logger.level = Logger::DEBUG
 ################################################################
 # this checks whether queue.json exists to reload state after programm is aborted
 ################################################################
+# TODO: Put this in a init function instead of main programm, start with tests
 worker_queue = []
 if File.file?(APP_DIR)
   logger.info('persistent_queue.json exists')
   persistent_queue = JSON.parse(File.read(APP_DIR))
-  worker_queue = persistent_queue
 else
   scraper = Scrape.new
 
@@ -39,44 +39,33 @@ else
   persistent_queue = []
 
   (0...track.size).each do |index|
-    link = get_track_link((artist[index]).to_s, (track[index]).to_s)
-    jid = Digest::MD5.hexdigest (artist[index]).to_s + (track[index]).to_s
-    temp_hash = {
-      "artist": (artist[index]),
-      "track": (track[index]).to_s,
-      "link": (link[0]).to_s,
-      "jid": jid.to_s,
-      ## possible states: queued, pending(to be processed by consumer), failed, completed
-      "state": 'queued'
-    }
+    queue = QueueObject.new
+    temp_hash = queue.create_hash(index, artist, track)
 
     persistent_queue << temp_hash
     File.open(APP_DIR, 'w') do |f|
       f.write(persistent_queue.to_json)
     end
     logger.debug(JSON.pretty_generate(temp_hash))
-    # sleep 1
-    # calculate hash and write to `DownloadedOrQueuedQueue`
-    # if already downloaded, don't enqueue
-    # otherwise put in queue
   end
 end
+worker_queue = persistent_queue
 logger.info('Tracklist initialized...')
 
 #### main program starts here
 # producer: should create queue.json which holds json representation of hypem.com/napcae + deezer links
-# save highest queued/pending job as .lastDownloaded
 #
-
 producer = Thread.new do
   count = 0
   loop do
     scraper = Scrape.new
     track = scraper.get_track_from_hypem
     artist = scraper.get_artist_from_hypem
+    h = Digest::MD5.new
 
     logger.debug("Most recent song on hypem should be: #{artist[count]} - #{track[count]}")
-    scraped_track_jid = Digest::MD5.hexdigest (artist[count]).to_s + (track[count]).to_s
+
+    scraped_track_jid = h.hexdigest (artist[count]).to_s + (track[count]).to_s
     # check if hash of new song is already known
     scraped_track_of_persistent_queue = persistent_queue.find { |x| x['jid'] == scraped_track_jid }
 
@@ -89,17 +78,8 @@ producer = Thread.new do
     else
       logger.debug("New items found! Going to queue: #{artist[count]} - #{track[count]}")
 
-      link = get_track_link((artist[count]).to_s, (track[count]).to_s)
-      jid = Digest::MD5.hexdigest (artist[count]).to_s + (track[count]).to_s
-
-      temp_hash = {
-        'artist' => (artist[count]).to_s,
-        'track' => (track[count]).to_s,
-        'link' => (link[0]).to_s,
-        'jid' => jid.to_s,
-        ## possible states: queued, pending(to be processed by  consumer), failed, completed
-        'state' => 'queued'
-      }
+      queue = QueueObject.new
+      temp_hash = queue.create_hash(count, artist, track)
 
       logger.debug("Putting job in worker queue: #{temp_hash}")
       worker_queue.unshift(temp_hash)
