@@ -6,6 +6,9 @@ this programm scrapes https://hypem.com/napcae to write a list for smloadr to do
 * save persistent file on interrupt
 * what happens if songs are removed from fav tracks? write test
 * tests
+* should accept input via telegram/cli
+* soundcloud as input
+* youtube as input
 
 
 
