@@ -50,7 +50,7 @@ end
 
 ## creating hashes
 class QueueObject
-  def create_hash(index = 0, artist_list, track_list)
+  def info(index = 0, artist_list, track_list)
     state = 'queued'
 
     if artist_list[index].empty? || track_list[index].empty?
@@ -69,6 +69,9 @@ class QueueObject
       ## possible states: queued, pending(to be processed by  consumer), failed, completed
       'state' => state.to_s
     }
+  end
+
+  def info!
   end
 end
 

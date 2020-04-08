@@ -17,14 +17,14 @@ track = ['',
          '',
          'testtrack']
 
-describe 'QueueObject#create' do
+describe 'QueueObject#info' do
   before(:each) do
-    @thing = QueueObject.new
+    @queue_object = QueueObject.new
   end
 
   context 'given valid parameters' do
-    it 'returns an hash object' do
-      expect(@thing.create_hash(1, artist, track)).to include(
+    it 'returns an hash object with link and a state for the queue' do
+      expect(@queue_object.info(1, artist, track)).to include(
         'artist' => 'lose yourself',
         'track' => 'eminem',
         'link' => '',
@@ -36,15 +36,15 @@ describe 'QueueObject#create' do
 
   context 'given empty artist/track' do
     it 'raises an error' do
-      expect { @thing.create_hash(0, artist, track) }.to raise_error(ArgumentError)
+      expect { @queue_object.info(0, artist, track) }.to raise_error(ArgumentError)
     end
 
     it 'raises an error' do
-      expect { @thing.create_hash(3, artist, track) }.to raise_error(ArgumentError)
+      expect { @queue_object.info(3, artist, track) }.to raise_error(ArgumentError)
     end
 
     it 'raises an error' do
-      expect { @thing.create_hash(4, artist, track) }.to raise_error(ArgumentError)
+      expect { @queue_object.info(4, artist, track) }.to raise_error(ArgumentError)
     end
   end
 end
