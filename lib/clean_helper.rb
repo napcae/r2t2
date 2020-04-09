@@ -8,7 +8,7 @@ require 'http'
 class CleanHelper
   HYPEM_ADDED_SUFFIX = ' - search Hype Machine for this artist'
 
-  def self.artist_track(str)
+  def artist_track(str)
     # remove everything in paranthesis, i.e.: "artist - SongTrack (feat. xxxx)"
     str = str.gsub(/ \(.+\)/, '')
 

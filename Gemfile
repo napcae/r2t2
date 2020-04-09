@@ -12,3 +12,5 @@ gem 'nokogiri'
 gem 'pry'
 gem 'rspec'
 gem 'simplecov', :require => false, :group => :test
+gem 'vcr'
+gem 'webmock'
