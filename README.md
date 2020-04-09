@@ -10,6 +10,7 @@ this programm scrapes https://hypem.com/napcae to write a list for smloadr to do
 * soundcloud as input
 * youtube as input
 
+* persistent_queue.json is going to get bigger over time this programm runs, worry about that
 
 
 ## works so far:
