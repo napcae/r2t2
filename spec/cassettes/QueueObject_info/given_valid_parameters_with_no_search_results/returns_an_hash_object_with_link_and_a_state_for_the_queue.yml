@@ -1,0 +1,45 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.deezer.com/search?q=artist:%22testartist%22track:%22testtrack%22%26limit=1%26order=RANKING
+    body:
+      encoding: UTF-8
+      string: ''
+    headers:
+      Connection:
+      - close
+      Host:
+      - api.deezer.com
+      User-Agent:
+      - http.rb/4.1.1
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 09 Apr 2020 15:45:36 GMT
+      Server:
+      - Apache
+      P3p:
+      - policyref="/w3c/p3p.xml" CP="IDC DSP COR CURa ADMa OUR IND PHY ONL COM STA"
+      Set-Cookie:
+      - dzr_uniq_id=dzr_uniq_id_frb70a1e0dec959729bcba0a16d1af4e4b6afed1; expires=Tue,
+        06-Oct-2020 15:45:36 GMT; Max-Age=15552000; path=/; domain=.deezer.com; secure
+      X-Host:
+      - blm-web-150
+      X-Content-Type-Options:
+      - nosniff
+      Content-Length:
+      - '21'
+      Connection:
+      - close
+      Content-Type:
+      - application/json; charset=utf-8
+    body:
+      encoding: UTF-8
+      string: '{"data":[],"total":0}'
+    http_version: null
+  recorded_at: Thu, 09 Apr 2020 15:45:36 GMT
+recorded_with: VCR 5.1.0
