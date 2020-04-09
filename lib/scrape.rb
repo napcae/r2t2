@@ -1,3 +1,4 @@
+require 'Nokogiri'
 # frozen_string_literal: true
 
 class Scrape
