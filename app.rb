@@ -9,11 +9,12 @@ require 'http'
 require 'logger'
 require 'httparty'
 Dir["./lib/*.rb"].each {|file| require file }
+Dir["./app/*.rb"].each {|file| require file }
 
 # constants and var init
 DEEZER_API_ENDPOINT = 'https://api.deezer.com/search?q='
 track, artist = ''
-APP_DIR = 'tmp/persistent_queue.json'
+PERSISTENT_QUEUE_FILE = 'tmp/persistent_queue.json'
 
 logger = Logger.new(STDOUT)
 logger.level = Logger::DEBUG
@@ -22,35 +23,13 @@ logger.level = Logger::DEBUG
 # this checks whether queue.json exists to reload state after programm is aborted
 ################################################################
 # TODO: Put this in a init function instead of main programm, start with tests
-worker_queue = []
-if File.file?(APP_DIR)
-  logger.info('persistent_queue.json exists')
-  persistent_queue = JSON.parse(File.read(APP_DIR))
-else
-  scraper = Scrape.new
+worker_queue, persistent_queue = []
 
-  track = scraper.get_track_from_hypem
-  artist = scraper.get_artist_from_hypem
-
-  # build_tracklist_to_download
-  logger.info('persistent_queue.json not found')
-  logger.info('Starting up and initializing tracklist...')
-
-  persistent_queue = []
-
-  (0...track.size).each do |index|
-    queue = QueueObject.new
-    temp_hash = queue.info(index, artist, track)
-
-    persistent_queue << temp_hash
-    File.open(APP_DIR, 'w') do |f|
-      f.write(persistent_queue.to_json)
-    end
-    logger.debug(JSON.pretty_generate(temp_hash))
-  end
+if Startup.new.init(PERSISTENT_QUEUE_FILE)
+  persistent_queue = JSON.parse(File.read(PERSISTENT_QUEUE_FILE))
+  worker_queue = persistent_queue
 end
-worker_queue = persistent_queue
-logger.info('Tracklist initialized...')
+
 
 #### main program starts here
 # producer: should create queue.json which holds json representation of hypem.com/napcae + deezer links
