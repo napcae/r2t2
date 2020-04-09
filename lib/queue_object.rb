@@ -33,6 +33,12 @@ class QueueObject
     end
   end
 
+  ##  
+  # given input of an index(of artist/track list), 
+  # a list of artists and tracks
+  # 
+  # will return hash with artist name, track name, link to deezer,
+  # hashed jobID and a state
   def info(index = 0, artist_list, track_list)
     state = 'queued'
 

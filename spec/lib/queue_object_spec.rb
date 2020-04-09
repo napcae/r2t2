@@ -31,15 +31,19 @@ describe 'QueueObject#info' do
     end
   end
 
-  context 'given empty artist/track' do
+  context 'given empty artist + track' do
     it 'raises an error' do
       expect { queue_object.info(0, artist, track) }.to raise_error(ArgumentError)
     end
+  end
 
+  context 'given empty track' do
     it 'raises an error' do
       expect { queue_object.info(3, artist, track) }.to raise_error(ArgumentError)
     end
-
+  end
+  
+  context 'given empty artist' do
     it 'raises an error' do
       expect { queue_object.info(4, artist, track) }.to raise_error(ArgumentError)
     end

@@ -1,5 +1,7 @@
 require_relative '../../lib/clean_helper.rb'
 
+# https://zverok.github.io/blog/2017-11-01-rspec-method-call.html
+
 describe 'CleanHelper#artist_track' do
   let (:c) { CleanHelper.new }
   
@@ -34,7 +36,7 @@ describe 'CleanHelper#artist_track' do
   	let (:actual) { 'Artist - SongTrack feat. Second Artist' }
   	let (:expected) { 'Artist - SongTrack' }
 
-  	it 'returns clean input' do
+  	it 'returns input without "feat. Artist"' do
    	  expect(c.artist_track(actual)).to eq(expected)
     end
   end
@@ -43,7 +45,7 @@ describe 'CleanHelper#artist_track' do
   	let (:actual) { 'Artist X Second Artist - SongTrack - search Hype Machine for this artist' }
 		let (:expected) { 'Artist, Second Artist - SongTrack' }
 
-  	it 'returns input without hypem added suffix' do
+  	it 'returns input without "x"/"X" replaced by ","' do
    	  expect(c.artist_track(actual)).to eq(expected)
     end
   end
