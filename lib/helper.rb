@@ -21,8 +21,8 @@ def clean_string(str)
   # remove "feat". or "Feat.", e.g. "Artist feat. artist2 - song"
   str = str.gsub(/ ([f|F]eat.*)/, '')
 
-  # remove Artist X Artist, e.g. "Artist X Artist2 - song"
-  str = str.gsub(/ X /, ', ')
+  # remove Artist X Artist, e.g. "Artist X Artist2 - song" Calper x Son of Cabe
+  str = str.gsub(/ [xX] /, ', ')
 end
 
 # puts clean_string("SB : COEO rubyartist (feat. deine mutter) + test (feat. deine mutter) - search Hype Machine for this artist")
