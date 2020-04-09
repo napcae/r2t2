@@ -13,13 +13,15 @@ track = ['',
          'testtrack']
 
 describe 'QueueObject#info' do
-  before(:each) do
-    @queue_object = QueueObject.new
-  end
+  # before(:each) do
+  #   @queue_object = QueueObject.new
+  # end
+
+  let (:queue_object) { QueueObject.new }
 
   context 'given valid parameters' do
     it 'returns an hash object with link and a state for the queue' do
-      expect(@queue_object.info(1, artist, track)).to include(
+      expect(queue_object.info(1, artist, track)).to include(
         'artist' => 'eminem',
         'track' => 'lose yourself',
         'link' => 'https://www.deezer.com/track/1109731',
@@ -31,15 +33,15 @@ describe 'QueueObject#info' do
 
   context 'given empty artist/track' do
     it 'raises an error' do
-      expect { @queue_object.info(0, artist, track) }.to raise_error(ArgumentError)
+      expect { queue_object.info(0, artist, track) }.to raise_error(ArgumentError)
     end
 
     it 'raises an error' do
-      expect { @queue_object.info(3, artist, track) }.to raise_error(ArgumentError)
+      expect { queue_object.info(3, artist, track) }.to raise_error(ArgumentError)
     end
 
     it 'raises an error' do
-      expect { @queue_object.info(4, artist, track) }.to raise_error(ArgumentError)
+      expect { queue_object.info(4, artist, track) }.to raise_error(ArgumentError)
     end
   end
 end

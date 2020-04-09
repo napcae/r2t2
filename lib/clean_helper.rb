@@ -9,9 +9,6 @@ class CleanHelper
   HYPEM_ADDED_SUFFIX = ' - search Hype Machine for this artist'
 
   def artist_track(str)
-    # remove until artist: "SB : COEO"
-    str = str.gsub(/.+\:\s/, '')
-
     # remove everything in paranthesis, i.e.: "artist - SongTrack (feat. xxxx)"
     str = str.gsub(/ \(.+\)/, '')
 
