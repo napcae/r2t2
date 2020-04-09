@@ -1,5 +1,6 @@
 ## creating hashes
 class QueueObject
+  DEEZER_API_ENDPOINT = 'https://api.deezer.com/search?q='
   # creating api call for deezer, search for artist and tracks scraped from hypem loved page
   # return deezer link for smloadr
   ###
@@ -9,8 +10,8 @@ class QueueObject
   # function returns link, status code as array
   ###
   def self.get_track_link(artist, track, title_count = 1)
-    escape = CGI.escape('artist:' + "\"#{artist}\"" + 'track:' + "\"#{track}\"" + "&limit=#{title_count}&order=RANKING")
-    query = DEEZER_API_ENDPOINT + escape
+    html_escape = CGI.escape('artist:' + "\"#{artist}\"" + 'track:' + "\"#{track}\"" + "&limit=#{title_count}&order=RANKING")
+    query = DEEZER_API_ENDPOINT + html_escape
 
     deezer_query = HTTP.get(query).to_s
 

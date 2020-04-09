@@ -1,7 +1,5 @@
 require_relative '../../lib/queue_object.rb'
 
-DEEZER_API_ENDPOINT = 'https://api.deezer.com/search?q='
-
 artist = ['',
           'eminem',
           'natalia lafourcade',

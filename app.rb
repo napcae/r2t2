@@ -1,14 +1,14 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-require_relative 'lib/scrape'
 require 'nokogiri'
 require 'json'
 require 'csv'
 require 'pp'
 require 'http'
+require 'logger'
 require 'httparty'
-require './helper.rb'
+Dir["./lib/*.rb"].each {|file| require file }
 
 # constants and var init
 DEEZER_API_ENDPOINT = 'https://api.deezer.com/search?q='
