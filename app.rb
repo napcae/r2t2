@@ -14,7 +14,7 @@ Dir["./app/*.rb"].each {|file| require file }
 # constants and var init
 DEEZER_API_ENDPOINT = 'https://api.deezer.com/search?q='
 track, artist = ''
-PERSISTENT_QUEUE_FILE = 'tmp/persistent_queue1111.json'
+PERSISTENT_QUEUE_FILE = 'tmp/persistent_queue.json'
 
 logger = Logger.new(STDOUT)
 logger.level = Logger::DEBUG
@@ -24,9 +24,6 @@ logger.level = Logger::DEBUG
 ################################################################
 # TODO: Put this in a init function instead of main programm, start with tests
 worker_queue, persistent_queue = []
-
-puts Startup.new.init(PERSISTENT_QUEUE_FILE)
-exit
 
 if Startup.new.init(PERSISTENT_QUEUE_FILE)
   persistent_queue = JSON.parse(File.read(PERSISTENT_QUEUE_FILE))

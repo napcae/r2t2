@@ -10,7 +10,12 @@ class Startup
 
   def init(persistence_file)
     if File.file?(persistence_file)
-      return true
+      if JSON.parse(File.read(persistence_file)).length < 50
+        logger.info('persistent_queue.json has less than 50 items, going to delete and recreate..')
+        File.delete(persistence_file)
+        persistence_file!(persistence_file)
+      end
+    return true
       #puts persistent_queue = JSON.parse(File.read(persistence_file))
     else
       persistence_file!(persistence_file)
