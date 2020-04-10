@@ -1,30 +1,30 @@
 #!/usr/bin/env ruby
-# frozen_string_literal: true
 
-require 'http'
+require 'httparty'
 require 'rspec/core/rake_task'
 
-SMLoadrVersion = '1.9.5'
-SMLoadrLink = "https://git.fuwafuwa.moe/SMLoadrDev/SMLoadr/releases/download/v#{SMLoadrVersion}/SMLoadr-linux-x64_v#{SMLoadrVersion}.zip"
+# https://git.fuwafuwa.moe/SMLoadrDev/SMLoadr/src/tag/v1.20.0
+SMLoadrLink = "https://git.fuwafuwa.moe/attachments/9a051535-b6d7-44ae-bee2-bb9aef22e189"
 SMLoadr = 'vendor/SMLoadr/SMLoadr-linux-x64.zip'
 
 RSpec::Core::RakeTask.new(:spec)
 task default: :spec
 
 task :prepare do
-  if !File.file?(SMLoadr)
+  # if !File.file?(SMLoadr)
     puts 'Downloading SMLoadr.'
     File.open(SMLoadr, 'w') do |f|
-      f.write(HTTP.follow.get(SMLoadrLink))
+      f.write(HTTParty.get(SMLoadrLink))
       puts 'Downloading SMLoadr successful.'
     rescue StandardError
-      File.delete(SMLoadr)
-      puts 'Download failed.'
+       File.delete(SMLoadr)
+       puts 'Download failed.'
+       puts HTTParty.get(SMLoadrLink).response
     end
 
-  else
-    puts 'SMLoadr already present.'
-  end
+  # else
+  #   puts 'SMLoadr already present.'
+  # end
 end
 
 task :build do
