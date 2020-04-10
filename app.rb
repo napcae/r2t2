@@ -16,8 +16,6 @@ DEEZER_API_ENDPOINT = 'https://api.deezer.com/search?q='
 track, artist = ''
 PERSISTENT_QUEUE_FILE = 'tmp/persistent_queue.json'
 
-logger = Logger.new(STDOUT)
-logger.level = Logger::DEBUG
 
 ################################################################
 # this checks whether queue.json exists to reload state after programm is aborted
@@ -30,6 +28,8 @@ if Startup.new.init(PERSISTENT_QUEUE_FILE)
   worker_queue = persistent_queue
 end
 
+logger = Logger.new(STDOUT)
+logger.level = Logger::DEBUG
 #### main program starts here
 # producer: should create queue.json which holds json representation of hypem.com/napcae + deezer links
 # 
@@ -84,7 +84,7 @@ consumer = Thread.new do
 end
 
 producer.join
-consumer.join
+#consumer.join
 
 #####
 # consumer: reads the queue and downloads the track
