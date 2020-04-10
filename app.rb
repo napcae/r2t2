@@ -8,8 +8,8 @@ require 'pp'
 require 'http'
 require 'logger'
 require 'httparty'
-Dir["./lib/*.rb"].each {|file| require file }
-Dir["./app/*.rb"].each {|file| require file }
+Dir['./lib/*.rb'].each { |file| require file }
+Dir['./app/*.rb'].each { |file| require file }
 
 # constants and var init
 DEEZER_API_ENDPOINT = 'https://api.deezer.com/search?q='
@@ -29,7 +29,6 @@ if Startup.new.init(PERSISTENT_QUEUE_FILE)
   persistent_queue = JSON.parse(File.read(PERSISTENT_QUEUE_FILE))
   worker_queue = persistent_queue
 end
-
 
 #### main program starts here
 # producer: should create queue.json which holds json representation of hypem.com/napcae + deezer links
@@ -89,7 +88,6 @@ producer.join
 #####
 # consumer: reads the queue and downloads the track
 # `./SMLoadr-linux-x64 -u #{link}`
-
 
 # lastDownload.close
 # multiple entries or nothing found for #artist - #track:

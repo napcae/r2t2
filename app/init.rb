@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative '../lib/logging.rb'
 require_relative '../lib/scrape.rb'
 require_relative '../lib/clean_helper.rb'
@@ -15,8 +17,8 @@ class Startup
         File.delete(persistence_file)
         persistence_file!(persistence_file)
       end
-    return true
-      #puts persistent_queue = JSON.parse(File.read(persistence_file))
+      return true
+      # puts persistent_queue = JSON.parse(File.read(persistence_file))
     else
       persistence_file!(persistence_file)
     end

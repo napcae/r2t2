@@ -9,7 +9,7 @@ SMLoadrLink = "https://git.fuwafuwa.moe/SMLoadrDev/SMLoadr/releases/download/v#{
 SMLoadr = 'vendor/SMLoadr/SMLoadr-linux-x64.zip'
 
 RSpec::Core::RakeTask.new(:spec)
-task :default => :spec
+task default: :spec
 
 task :prepare do
   if !File.file?(SMLoadr)

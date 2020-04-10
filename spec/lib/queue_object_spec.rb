@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative '../../lib/queue_object.rb'
 
 artist = ['eminem',
@@ -56,7 +58,7 @@ describe 'QueueObject#info' do
       expect { queue_object.info(3, artist, track) }.to raise_error(ArgumentError)
     end
   end
-  
+
   context 'given empty artist' do
     it 'raises an error' do
       expect { queue_object.info(4, artist, track) }.to raise_error(ArgumentError)

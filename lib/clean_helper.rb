@@ -3,8 +3,6 @@
 require 'cgi'
 require 'http'
 
-
-
 class CleanHelper
   HYPEM_ADDED_SUFFIX = ' - search Hype Machine for this artist'
 

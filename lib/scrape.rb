@@ -1,5 +1,6 @@
-require 'Nokogiri'
 # frozen_string_literal: true
+
+require 'Nokogiri'
 
 class Scrape
   def initialize
