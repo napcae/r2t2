@@ -4,8 +4,8 @@ require_relative '../lib/logging.rb'
 require_relative '../lib/scrape.rb'
 require_relative '../lib/clean_helper.rb'
 require_relative '../lib/queue_object.rb'
-require 'JSON'
-require 'HTTParty'
+require 'json'
+require 'httparty'
 
 class Startup
   include Logging

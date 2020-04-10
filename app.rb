@@ -77,7 +77,8 @@ end
 
 consumer = Thread.new do
   loop do
-    system("ls")
+    #system("ls")
+    pp "consuming.."
     sleep 5
   end
 end

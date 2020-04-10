@@ -1,9 +1,12 @@
-FROM ruby:2.6.5
+FROM ruby:2.7.1-alpine3.11
 
-COPY SMLoadr-linux-x64 .
+COPY vendor/SMLoadr/SMLoadr-linux-x64 .
 
-RUN gem install bundler
-RUN bundle config --global frozen 1
+RUN apk add --update build-base
+
+RUN gem install bundler 
+RUN gem install unf_ext -v '0.0.7.6' --source 'https://rubygems.org/'
+RUN bundle config
 
 WORKDIR /usr/src/app
 
@@ -11,7 +14,7 @@ COPY Gemfile Gemfile.lock ./
 RUN bundle install
 
 COPY . .
-RUN rm SMLoadr-linux-x64.zip
+RUN rm vendor/SMLoadr/SMLoadr-linux-x64.zip
 
 CMD ["./app.rb"]
 

@@ -15,7 +15,7 @@ class QueueObject
     html_escape = CGI.escape('artist:' + "\"#{artist}\"" + 'track:' + "\"#{track}\"" + "&limit=#{title_count}&order=RANKING")
     query = DEEZER_API_ENDPOINT + html_escape
 
-    deezer_query = HTTP.get(query).to_s
+    deezer_query = HTTParty.get(query).to_s
 
     json = JSON.parse(deezer_query)
     parsed = json['data']
