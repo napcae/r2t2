@@ -32,7 +32,7 @@ end
 
 #### main program starts here
 # producer: should create queue.json which holds json representation of hypem.com/napcae + deezer links
-#
+# 
 producer = Thread.new do
   count = 0
   loop do
@@ -68,22 +68,22 @@ producer = Thread.new do
       count += 1
 
       logger.debug('Attempting to persist changes to disk')
-      File.open(APP_DIR, 'w') do |f|
+      File.open(PERSISTENT_QUEUE_FILE, 'w') do |f|
         f.write(persistent_queue.to_json)
       end
     end
   end
 end
 
-# consumer = Thread.new do
-#   loop do
-#     puts "I'm here"
-#     sleep 5
-#   end
-# end
+consumer = Thread.new do
+  loop do
+    system("ls")
+    sleep 5
+  end
+end
 
 producer.join
-# consumer.join
+consumer.join
 
 #####
 # consumer: reads the queue and downloads the track
