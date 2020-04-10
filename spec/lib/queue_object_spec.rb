@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require_relative '../../lib/queue_object.rb'
-
 artist = ['eminem',
           'testartist',
           'testartist',

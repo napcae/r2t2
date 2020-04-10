@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require_relative '../../lib/clean_helper.rb'
-
 # https://zverok.github.io/blog/2017-11-01-rspec-method-call.html
 
 describe 'CleanHelper#artist_track' do

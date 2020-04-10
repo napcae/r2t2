@@ -1,9 +1,5 @@
 # frozen_string_literal: true
 
-require_relative '../../lib/scrape.rb'
-require_relative '../../lib/clean_helper.rb'
-require 'HTTParty'
-
 describe 'Scrape' do
   context '#get_artist_from_hypem', :vcr do
     let (:s) { Scrape.new.get_artist_from_hypem }
