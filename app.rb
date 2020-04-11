@@ -30,6 +30,9 @@ end
 
 logger = Logger.new(STDOUT)
 logger.level = Logger::DEBUG
+
+semaphore = Mutex.new
+
 #### main program starts here
 # producer: should create queue.json which holds json representation of hypem.com/napcae + deezer links
 # 
