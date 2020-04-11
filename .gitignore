@@ -2,6 +2,7 @@ SMLoadr-linux-x86*
 SMLoadr-linux-x64*
 .lastDownload
 downloadLinks.txt
+downloadedSuccessfully.txt
 SMLoadr-linux-x64.zip
 *.json
 tmp*/
