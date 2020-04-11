@@ -1,6 +1,10 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
+# Don't buffer output to stdout as this doesn't play well with Docker Compose
+# (data written to stdout, e.g. via puts, may not be displayed on the terminal)
+$stdout.sync = true
+
 require 'nokogiri'
 require 'json'
 require 'csv'
@@ -94,12 +98,12 @@ consumer = Thread.new do
         queue_item["state"] = "error"
       else
         ## now go download/process
+        puts "start download: "
         download_result = `cd ./vendor/SMLoadr && ./SMLoadr-linux-x64 -u "#{queue_item["link"]} -p /usr/src/app/app_data/DOWNLOADS/"`
-
+        puts download_result 
         if download_result #
           queue_item["state"] = "finished"
-          link = queue_item["link"]
-          logger.debug("Successfully downloaded: #{link}")
+          logger.debug("Successfully downloaded: #{queue_item}")
         else
           queue_item["state"] = "error"
           logger.debug("Error while executing SMLoadr: #{download_result}")
@@ -107,7 +111,7 @@ consumer = Thread.new do
       end
     else
       logger.debug("No new items to queue found") 
-      sleep 300
+      sleep 5
     end
 
     semaphore.synchronize {

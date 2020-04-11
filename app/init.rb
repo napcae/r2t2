@@ -11,6 +11,7 @@ class Startup
   include Logging
 
   def init(persistence_file)
+    smloadr_config
     if File.file?(persistence_file)
       if JSON.parse(File.read(persistence_file)).length < 50
         logger.info('persistent_queue.json has less than 50 items, going to delete and recreate..')
@@ -46,6 +47,19 @@ class Startup
         f.write(persistent_queue.to_json)
       end
       logger.debug(JSON.pretty_generate(temp_hash))
+    end
+  end
+
+  def smloadr_config
+    smloadrconfig_arl = {}
+    smloadrconfig_arl["arl"] = ENV["SMLOADRCONFIG_ARL"]
+    if smloadrconfig_arl["arl"] == nil
+      logger.info("No SMLoadr arl found, going to quit!")
+      exit
+    else
+      File.open("vendor/SMLoadr/SMLoadrConfig.json", 'w') do |f|
+        f.write(smloadrconfig_arl.to_json)
+      end
     end
   end
 end
