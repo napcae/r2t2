@@ -1,4 +1,4 @@
-#!usr/bin/env ruby
+#!/usr/bin/env ruby
 # frozen_string_literal: true
 
 require 'nokogiri'
@@ -8,13 +8,13 @@ require 'pp'
 require 'http'
 require 'logger'
 require 'httparty'
+require 'dotenv'
 Dir['./lib/*.rb'].each { |file| require file }
 Dir['./app/*.rb'].each { |file| require file }
 
 # constants and var init
-DEEZER_API_ENDPOINT = 'https://api.deezer.com/search?q='
 track, artist = ''
-PERSISTENT_QUEUE_FILE = 'tmp/persistent_queue.json'
+PERSISTENT_QUEUE_FILE = 'app_data/persistent_queue.json'
 
 
 ################################################################
@@ -85,36 +85,36 @@ end
 consumer = Thread.new do
   loop do
     #@consumers.times do
-    puts "going to consume main"
-      queue_item = worker_queue.find { |i| i["state"] == "queued" }
 
-      if queue_item ## as long as items with "queued" as status exists, do this:
-        if queue_item["link"].empty?
-          logger.debug("No Link in track to consume found.")
-          queue_item["state"] = "error"
-        else
-          ## now go download/process
-          download_result = `cd ./vendor/SMLoadr && ./SMLoadr-linux-x64 -u "#{queue_item["link"]}"`
+    queue_item = worker_queue.find { |i| i["state"] == "queued" }
 
-          if download_result #
-            queue_item["state"] = "finished"
-            link = queue_item["link"]
-            logger.debug("Successfully downloaded: #{link}")
-          else
-            queue_item["state"] = "error"
-            logger.debug("Error while executing SMLoadr: #{download_result}")
-          end
-        end
+    if queue_item ## as long as items with "queued" as status exists, do this:
+      if queue_item["link"].empty?
+        logger.debug("No Link in track to consume found.")
+        queue_item["state"] = "error"
       else
-        logger.debug("No new items to queue found") 
-        sleep 300
-      end
+        ## now go download/process
+        download_result = `cd ./vendor/SMLoadr && ./SMLoadr-linux-x64 -u "#{queue_item["link"]} -p "`
 
-      semaphore.synchronize {
-        File.open(PERSISTENT_QUEUE_FILE, 'w') do |f|
-          f.write(worker_queue.to_json)
+        if download_result #
+          queue_item["state"] = "finished"
+          link = queue_item["link"]
+          logger.debug("Successfully downloaded: #{link}")
+        else
+          queue_item["state"] = "error"
+          logger.debug("Error while executing SMLoadr: #{download_result}")
         end
-      }
+      end
+    else
+      logger.debug("No new items to queue found") 
+      sleep 300
+    end
+
+    semaphore.synchronize {
+      File.open(PERSISTENT_QUEUE_FILE, 'w') do |f|
+        f.write(worker_queue.to_json)
+      end
+    }
     end
   end
 

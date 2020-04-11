@@ -14,8 +14,8 @@ COPY Gemfile Gemfile.lock ./
 RUN bundle install
 
 COPY . .
-RUN mkdir tmp
-RUN rm vendor/SMLoadr/SMLoadr-linux-x64.zip
+RUN rm vendor/SMLoadr/SMLoadr-linux-x64-v1.20.0.zip
+RUN mkdir -p app_data
 
 CMD ["./app.rb"]
 
