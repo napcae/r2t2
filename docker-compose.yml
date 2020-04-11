@@ -1,0 +1,7 @@
+version: '2'
+services:
+  r2t2:
+    build: ./
+    #restart: on-failure:1
+    volumes:
+      - ./app_data:/usr/src/app/app_data

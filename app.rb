@@ -94,7 +94,7 @@ consumer = Thread.new do
         queue_item["state"] = "error"
       else
         ## now go download/process
-        download_result = `cd ./vendor/SMLoadr && ./SMLoadr-linux-x64 -u "#{queue_item["link"]} -p "`
+        download_result = `cd ./vendor/SMLoadr && ./SMLoadr-linux-x64 -u "#{queue_item["link"]} -p /usr/src/app/app_data/DOWNLOADS/"`
 
         if download_result #
           queue_item["state"] = "finished"
