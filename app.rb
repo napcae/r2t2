@@ -1,4 +1,4 @@
-#!/usr/bin/env ruby
+#!usr/bin/env ruby
 # frozen_string_literal: true
 
 require 'nokogiri'
@@ -69,8 +69,6 @@ producer = Thread.new do
         worker_queue.unshift(temp_hash)
       }
 
-      #logger.debug("Worker queue, last 10 items: #{worker_queue[0..9]}")
-
       logger.debug("Worker Queue, last 5 items: #{worker_queue[0..4].to_yaml}")
       count += 1
 
@@ -85,41 +83,40 @@ producer = Thread.new do
 end
 
 consumer = Thread.new do
-  count = worker_queue.length
   loop do
-puts "test consuming"
     #@consumers.times do
-    
-      count = worker_queue.length
+    puts "going to consume main"
       queue_item = worker_queue.find { |i| i["state"] == "queued" }
 
-      if queue_item # as long as items with "queued" as status exists, do this:
-        #execute from different dir??
-        #system("cd ./vendor/SMLoadr && ./SMLoadr-linux-x64 -u #{queue_item["link"]}")
-        if system("echo yeah, downloading #{queue_item["link"]}")
-        queue_item["state"] = "processing"
+      if queue_item ## as long as items with "queued" as status exists, do this:
+        if queue_item["link"].empty?
+          logger.debug("No Link in track to consume found.")
+          queue_item["state"] = "error"
+        else
+          ## now go download/process
+          download_result = `cd ./vendor/SMLoadr && ./SMLoadr-linux-x64 -u "#{queue_item["link"]}"`
 
-        logger.debug(queue_item)
-      
-        semaphore.synchronize {
-          File.open(PERSISTENT_QUEUE_FILE, 'w') do |f|
-            f.write(worker_queue.to_json)
+          if download_result #
+            queue_item["state"] = "finished"
+            link = queue_item["link"]
+            logger.debug("Successfully downloaded: #{link}")
+          else
+            queue_item["state"] = "error"
+            logger.debug("Error while executing SMLoadr: #{download_result}")
           end
-        }
         end
       else
-        logger.debug("No new items to queue found")
-        sleep 5
-        
+        logger.debug("No new items to queue found") 
+        sleep 300
       end
-      
-      # loop do
-      #   @queue.pop
-      #   say "Consumed a widget: #{@queue.size} in queue..."
-      # end
-     #puts @queue[0]
-   end
-end
+
+      semaphore.synchronize {
+        File.open(PERSISTENT_QUEUE_FILE, 'w') do |f|
+          f.write(worker_queue.to_json)
+        end
+      }
+    end
+  end
 
 
 #pc = ProducerConsumer.new(persistent_queue)
