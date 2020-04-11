@@ -5,13 +5,13 @@ require 'rspec/core/rake_task'
 
 # https://git.fuwafuwa.moe/SMLoadrDev/SMLoadr/src/tag/v1.20.0
 SMLoadrLink = "https://git.fuwafuwa.moe/attachments/9a051535-b6d7-44ae-bee2-bb9aef22e189"
-SMLoadr = 'vendor/SMLoadr/SMLoadr-linux-x64.zip'
+SMLoadr = 'vendor/SMLoadr/SMLoadr-linux-x64-v1.20.0.zip'
 
 RSpec::Core::RakeTask.new(:spec)
 task default: :spec
 
 task :prepare do
-  # if !File.file?(SMLoadr)
+  if !File.file?(SMLoadr)
     puts 'Downloading SMLoadr.'
     File.open(SMLoadr, 'w') do |f|
       f.write(HTTParty.get(SMLoadrLink))
@@ -22,9 +22,9 @@ task :prepare do
        puts HTTParty.get(SMLoadrLink).response
     end
 
-  # else
-  #   puts 'SMLoadr already present.'
-  # end
+  else
+    puts 'SMLoadr already present.'
+  end
 end
 
 task :build do
