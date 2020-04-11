@@ -28,8 +28,8 @@ task :prepare do
 end
 
 task :build do
-  system("unzip -f #{SMLoadr}")
-  system('chmod +x SMLoadr-linux-x64')
+  system("unzip -u #{SMLoadr} -d vendor/SMLoadr/")
+  system('chmod +x vendor/SMLoadr/SMLoadr-linux-x64')
   system('docker build -t favtrackloader:dev .')
 end
 
