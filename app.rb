@@ -44,7 +44,7 @@ producer = Thread.new do
     artist = scraper.get_artist_from_hypem
     h = Digest::MD5.new
 
-    logger.debug("Most recent song on hypem should be: #{artist[count]} - #{track[count]}")
+    logger.debug("Last known song on hypem should be: #{artist[count]} - #{track[count]}")
 
     scraped_track_jid = h.hexdigest (artist[count]).to_s + (track[count]).to_s
     # check if hash of new song is already known
@@ -69,9 +69,9 @@ producer = Thread.new do
         worker_queue.unshift(temp_hash)
       }
 
-      logger.debug("Worker queue, last 10 items: #{worker_queue[0..9]}")
+      #logger.debug("Worker queue, last 10 items: #{worker_queue[0..9]}")
 
-      logger.debug("Worker Queue: #{worker_queue[0..3].to_yaml}")
+      logger.debug("Worker Queue, last 5 items: #{worker_queue[0..4].to_yaml}")
       count += 1
 
       semaphore.synchronize {
