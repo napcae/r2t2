@@ -63,30 +63,76 @@ producer = Thread.new do
       temp_hash = queue.info(count, artist, track)
 
       logger.debug("Putting job in worker queue: #{temp_hash}")
-      worker_queue.unshift(temp_hash)
+      
+      # mutex so shared access data is safe
+      semaphore.synchronize {
+        worker_queue.unshift(temp_hash)
+      }
 
       logger.debug("Worker queue, last 10 items: #{worker_queue[0..9]}")
 
-      logger.debug("Worker Queue: #{persistent_queue[0..3].to_yaml}")
+      logger.debug("Worker Queue: #{worker_queue[0..3].to_yaml}")
       count += 1
 
-      logger.debug('Attempting to persist changes to disk')
-      File.open(PERSISTENT_QUEUE_FILE, 'w') do |f|
-        f.write(persistent_queue.to_json)
-      end
+      semaphore.synchronize {
+        logger.debug('Attempting to persist changes to disk')
+        File.open(PERSISTENT_QUEUE_FILE, 'w') do |f|
+          f.write(worker_queue.to_json)
+        end
+      }
     end
   end
 end
 
 consumer = Thread.new do
+  count = worker_queue.length
   loop do
-    #system("ls")
-    pp "consuming.."
-    sleep 5
-  end
+puts "test consuming"
+    #@consumers.times do
+    
+      count = worker_queue.length
+      queue_item = worker_queue.find { |i| i["state"] == "queued" }
+
+      if queue_item # as long as items with "queued" as status exists, do this:
+        #execute from different dir??
+        #system("cd ./vendor/SMLoadr && ./SMLoadr-linux-x64 -u #{queue_item["link"]}")
+        if system("echo yeah, downloading #{queue_item["link"]}")
+        queue_item["state"] = "processing"
+
+        logger.debug(queue_item)
+      
+        semaphore.synchronize {
+          File.open(PERSISTENT_QUEUE_FILE, 'w') do |f|
+            f.write(worker_queue.to_json)
+          end
+        }
+        end
+      else
+        logger.debug("No new items to queue found")
+        sleep 5
+        
+      end
+      
+      # loop do
+      #   @queue.pop
+      #   say "Consumed a widget: #{@queue.size} in queue..."
+      # end
+     #puts @queue[0]
+   end
 end
 
+
+#pc = ProducerConsumer.new(persistent_queue)
 producer.join
+consumer.join
+
+
+
+
+# puts "run it"
+# pc.run
+# sleep 0.5
+# pc.kill
 #consumer.join
 
 #####
