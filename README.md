@@ -30,9 +30,6 @@ this programm scrapes https://hypem.com/napcae to write a list for smloadr to do
 		* then write new state to persistent file
 	* repeat
 
-* bug? changing persistent_file.json on disk won't do anything since program is loading this file only once at start. any edit will be overwritten by the working queue in memory
-* retry + error code of system execution(smloadr) is needed
-
 * push message if need tracks are available
 * error handling to sentry:  Honeybadger, Airbrake, Rollbar, BugSnag, Sentry, Exceptiontrap, Raygu
 * https://blog.hartleybrody.com/web-scraping-cheat-sheet/#using-proxy-servers
