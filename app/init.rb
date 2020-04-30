@@ -55,7 +55,7 @@ class Startup
     smloadrconfig_arl["arl"] = ENV["SMLOADRCONFIG_ARL"]
     if smloadrconfig_arl["arl"] == nil
       logger.info("No SMLoadr arl found, going to quit!")
-      exit
+      #exit
     else
       File.open("vendor/SMLoadr/SMLoadrConfig.json", 'w') do |f|
         f.write(smloadrconfig_arl.to_json)

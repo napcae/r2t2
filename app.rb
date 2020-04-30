@@ -99,9 +99,9 @@ consumer = Thread.new do
       else
         ## now go download/process
         puts "start download: "
-        download_result = `cd ./vendor/SMLoadr && ./SMLoadr-linux-x64 -u "#{queue_item["link"]} -p /usr/src/app/app_data/DOWNLOADS/"`
+        download_result = `cd ./vendor/SMLoadr && ./SMLoadr-linux-x64 -u #{queue_item['link']} -p /usr/src/app/app_data/DOWNLOADS/`
         puts download_result 
-        if download_result #
+        if download_result.include? 'Finished downloading track'
           queue_item["state"] = "finished"
           logger.debug("Successfully downloaded: #{queue_item}")
         else

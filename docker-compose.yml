@@ -7,4 +7,3 @@ services:
       - SMLOADRCONFIG_ARL=${SMLOADRCONFIG_ARL}
     volumes:
       - ./app_data:/usr/src/app/app_data
-      - ./app_data/DOWNLOADS:/usr/src/app/vendor/SMLoadr/DOWNLOADS
