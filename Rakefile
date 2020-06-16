@@ -2,6 +2,7 @@
 
 require 'httparty'
 require 'rspec/core/rake_task'
+require 'fileutils'
 
 # https://git.fuwafuwa.moe/SMLoadrDev/SMLoadr/src/tag/v1.20.0
 SMLoadrLink = "https://git.fuwafuwa.moe/attachments/9a051535-b6d7-44ae-bee2-bb9aef22e189"
@@ -12,6 +13,7 @@ task default: :spec
 
 task :prepare do
   if !File.file?(SMLoadr)
+    FileUtils.mkdir_p 'vendor/SMLoadr'
     puts 'Downloading SMLoadr.'
     File.open(SMLoadr, 'w') do |f|
       f.write(HTTParty.get(SMLoadrLink))
